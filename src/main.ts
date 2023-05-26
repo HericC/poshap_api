@@ -16,10 +16,16 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
+  const APP_NAME = configService.get('APP_NAME');
+  const APP_VERSION = configService.get('APP_VERSION');
+  const APP_DOCS_PATH = configService.get('APP_DOCS_PATH') || 'doc';
+  const APP_URL = configService.get('APP_URL');
+  const APP_PORT = configService.get('APP_PORT') || 3000;
+
   // Security
   app.use(helmet());
   app.enableCors({
-    origin: configService.get('APP_NAME') || '*',
+    origin: APP_NAME || '*',
   });
 
   // Pipes
@@ -33,33 +39,31 @@ async function bootstrap() {
   app.useGlobalPipes(new TrimPipe());
 
   // Swagger
-  const appName = configService.get('APP_NAME') || 'DOC';
+  const appName = APP_NAME;
   const config = new DocumentBuilder()
     .addBearerAuth()
     .setTitle(appName)
     .setDescription(`This a API documentation to ${appName}`)
-    .setVersion(configService.get('APP_VERSION'))
+    .setVersion(APP_VERSION)
     .build();
   const document = SwaggerModule.createDocument(app, config);
   const customOptions: SwaggerCustomOptions = {
     explorer: false,
-    customSiteTitle: configService.get('APP_NAME'),
+    customSiteTitle: APP_NAME,
     swaggerOptions: {
       persistAuthorization: true,
       docExpansion: 'none',
       filter: '',
     },
   };
-  SwaggerModule.setup(
-    configService.get('APP_DOCS_PATH') || 'doc',
-    app,
-    document,
-    customOptions,
-  );
+  SwaggerModule.setup(APP_DOCS_PATH, app, document, customOptions);
 
   // Start server
-  const port = configService.get('APP_PORT') || 3000;
-  await app.listen(port);
+  await app.listen(APP_PORT, () => {
+    const url = APP_URL || `http://localhost:${APP_PORT}`;
+    console.log(`Running API: ${url}`);
+    console.log(`Running DOC: ${url}/${APP_DOCS_PATH}`);
+  });
 }
 
 bootstrap();
