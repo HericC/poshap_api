@@ -33,7 +33,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "compodoc": "npx @compodoc/compodoc -p tsconfig.json -s",
     "prepare": "husky install",
-    "init": "npm install && npm run prepare",
+    "gen": "npx prisma generate",
+    "up": "npx prisma db push",
+    "init": "npm install && npm run prepare && npm run gen",
     "commit": "cz"
   },
   "dependencies": {

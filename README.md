@@ -40,6 +40,16 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Prisma client
+
+```bash
+# Generate prisma client
+$ npm run gen
+
+# Update prisma client (Whenever you update schema.prisma, you will need to run this command)
+$ npm run up
+```
+
 ## Test
 
 ```bash
