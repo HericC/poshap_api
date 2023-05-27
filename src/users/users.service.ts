@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UsersRepository } from './repositories/users.repository';
+import { UsersRepository } from './repositories/users.prisma.repository';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(private usersRepository: UsersRepository) {}
 
   async create(createUserDto: CreateUserDto) {
-    return this.usersRepository.create(createUserDto);
+    const hash = await bcrypt.hash(createUserDto.password, 8);
+    return this.usersRepository.create({ ...createUserDto, password: hash });
   }
 
   async findAll() {
@@ -20,7 +22,14 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    return this.usersRepository.update(id, updateUserDto);
+    let hash: string;
+    if (updateUserDto.password)
+      hash = await bcrypt.hash(updateUserDto.password, 8);
+
+    return this.usersRepository.update(id, {
+      ...updateUserDto,
+      password: hash,
+    });
   }
 
   async remove(id: string) {

@@ -5,6 +5,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 const throttlerGuard = { provide: APP_GUARD, useClass: ThrottlerGuard };
 
@@ -13,6 +14,7 @@ const throttlerGuard = { provide: APP_GUARD, useClass: ThrottlerGuard };
     ConfigModule.forRoot({ isGlobal: true, cache: true }),
     ThrottlerModule.forRoot({ ttl: 60, limit: 10 }),
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, throttlerGuard],
