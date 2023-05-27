@@ -48,6 +48,9 @@ $ npm run gen
 
 # Update prisma client (Whenever you update schema.prisma, you will need to run this command)
 $ npm run up
+
+# Run prisma studio
+$ npm run studio
 ```
 
 ## Test

@@ -35,6 +35,7 @@
     "prepare": "husky install",
     "gen": "npx prisma generate",
     "up": "npx prisma db push",
+    "studio": "npx prisma studio",
     "init": "npm install && npm run prepare && npm run gen",
     "commit": "cz"
   },
