@@ -21,10 +21,10 @@
 $ npm install
 
 # install commit standardization
-$ npm prepare
+$ npm run prepare
 
 # complete installation
-$ npm init
+$ npm run init
 ```
 
 ## Running the app
