@@ -33,11 +33,11 @@ $ npm run init
 # development
 $ npm run start
 
-# watch mode
-$ npm run start:dev
+# development watch mode
+$ npm run dev
 
 # production mode
-$ npm run start:prod
+$ npm run prod
 ```
 
 ## Prisma client
