@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './repositories/users.prisma.repository';
+import { NotFoundError } from '../common/errors/not-found.error';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -18,7 +19,9 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    return this.usersRepository.findOne(id);
+    const user = await this.usersRepository.findOne(id);
+    if (!user) throw new NotFoundError('Usuário não encontrado.');
+    return user;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {

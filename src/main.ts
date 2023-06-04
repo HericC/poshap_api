@@ -10,7 +10,12 @@ import {
 import helmet from 'helmet';
 
 import { AppModule } from './app.module';
-import { TrimPipe } from './common/pipes/TrimPipe';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { TrimPipe } from './common/pipes/trim-pipe';
+import { ConflictInterceptor } from './common/interceptors/conflict.interceptor';
+import { PrismaInterceptor } from './common/interceptors/prisma.interceptor';
+import { NotFoundInterceptor } from './common/interceptors/not-found.interceptor';
+import { UnauthorizedInterceptor } from './common/interceptors/unauthorized.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,6 +33,9 @@ async function bootstrap() {
     origin: APP_NAME || '*',
   });
 
+  // Filters
+  app.useGlobalFilters(new HttpExceptionFilter());
+
   // Pipes
   app.useGlobalPipes(
     new ValidationPipe({
@@ -37,6 +45,12 @@ async function bootstrap() {
     }),
   );
   app.useGlobalPipes(new TrimPipe());
+
+  // Interceptors
+  app.useGlobalInterceptors(new ConflictInterceptor());
+  app.useGlobalInterceptors(new PrismaInterceptor());
+  app.useGlobalInterceptors(new NotFoundInterceptor());
+  app.useGlobalInterceptors(new UnauthorizedInterceptor());
 
   // Swagger
   const appName = APP_NAME;
