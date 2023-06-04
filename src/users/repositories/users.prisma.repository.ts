@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from '../../prisma/prisma.service';
 
-const selectOptions = {
+const select = {
   id: true,
   name: true,
   email: true,
@@ -18,21 +17,23 @@ const selectOptions = {
 export class UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(data: Prisma.UserCreateInput) {
     return this.prisma.user.create({
-      data: createUserDto,
-      select: selectOptions,
+      data,
+      select,
     });
   }
 
   async findAll() {
-    return this.prisma.user.findMany({ select: selectOptions });
+    return this.prisma.user.findMany({
+      select,
+    });
   }
 
   async findOne(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
-      select: selectOptions,
+      select,
     });
   }
 
@@ -42,15 +43,18 @@ export class UsersRepository {
     });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, data: Prisma.UserUpdateInput) {
     return this.prisma.user.update({
       where: { id },
-      data: updateUserDto,
-      select: selectOptions,
+      data,
+      select,
     });
   }
 
   async remove(id: string) {
-    return this.prisma.user.delete({ where: { id }, select: selectOptions });
+    return this.prisma.user.delete({
+      where: { id },
+      select,
+    });
   }
 }
