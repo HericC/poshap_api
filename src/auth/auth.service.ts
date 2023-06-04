@@ -7,8 +7,8 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
   constructor(
-    private usersRepository: UsersRepository,
-    private jwtService: JwtService,
+    private readonly usersRepository: UsersRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
   async login(user: UserEntity) {
