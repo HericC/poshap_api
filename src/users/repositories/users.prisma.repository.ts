@@ -7,7 +7,6 @@ const select = {
   name: true,
   email: true,
   phone: true,
-  password: false,
   createdAt: true,
   updatedAt: true,
   deletedAt: true,
@@ -17,7 +16,9 @@ const select = {
 export class UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: Prisma.UserCreateInput) {
+  async create(uncheckedData: Prisma.UserUncheckedCreateInput) {
+    const data: Prisma.UserCreateInput = { ...uncheckedData };
+
     return this.prisma.user.create({
       data,
       select,
@@ -43,7 +44,9 @@ export class UsersRepository {
     });
   }
 
-  async update(id: string, data: Prisma.UserUpdateInput) {
+  async update(id: string, uncheckedData: Prisma.UserUncheckedUpdateInput) {
+    const data: Prisma.UserUpdateInput = { ...uncheckedData };
+
     return this.prisma.user.update({
       where: { id },
       data,
