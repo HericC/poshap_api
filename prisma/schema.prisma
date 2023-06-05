@@ -16,9 +16,26 @@ model User {
   email     String    @unique
   phone     String
   password  String
+  services  Service[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
   deletedAt DateTime?
 
   @@map("user")
+}
+
+model Service {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  category    String
+  price       Float
+  description String?
+  scheduling  Boolean
+  priority    Boolean
+  providerId  String    @db.ObjectId
+  provider    User      @relation(fields: [providerId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+  deletedAt   DateTime?
+
+  @@map("service")
 }
