@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { ServicesModule } from './services/services.module';
 
 const throttlerGuard = { provide: APP_GUARD, useClass: ThrottlerGuard };
 
@@ -15,6 +16,7 @@ const throttlerGuard = { provide: APP_GUARD, useClass: ThrottlerGuard };
     ThrottlerModule.forRoot({ ttl: 60, limit: 10 }),
     UsersModule,
     AuthModule,
+    ServicesModule,
   ],
   controllers: [AppController],
   providers: [AppService, throttlerGuard],

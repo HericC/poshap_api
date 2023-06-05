@@ -12,6 +12,18 @@ const select = {
   deletedAt: true,
 };
 
+const include = {
+  services: {
+    select: {
+      id: true,
+      category: true,
+      price: true,
+      scheduling: true,
+      priority: true,
+    },
+  },
+};
+
 @Injectable()
 export class UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -34,7 +46,7 @@ export class UsersRepository {
   async findOne(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
-      select,
+      select: { ...select, ...include },
     });
   }
 
