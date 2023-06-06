@@ -29,8 +29,8 @@ model Service {
   category    String
   price       Float
   description String?
-  scheduling  Boolean
-  priority    Boolean
+  scheduling  Boolean   @default(false)
+  priority    Boolean   @default(false)
   providerId  String    @db.ObjectId
   provider    User      @relation(fields: [providerId], references: [id])
   createdAt   DateTime  @default(now())
