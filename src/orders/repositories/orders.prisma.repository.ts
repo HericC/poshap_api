@@ -14,45 +14,39 @@ const include = {
 };
 
 @Injectable()
-export class ServicesRepository {
+export class OrdersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(uncheckedData: Prisma.ServiceUncheckedCreateInput) {
+  async create(uncheckedData: Prisma.OrderUncheckedCreateInput) {
     const providerId = uncheckedData.providerId;
+    const clientId = uncheckedData.clientId;
     delete uncheckedData.providerId;
+    delete uncheckedData.clientId;
 
-    const data: Prisma.ServiceCreateInput = {
+    const data: Prisma.OrderCreateInput = {
       ...uncheckedData,
       provider: { connect: { id: providerId } },
+      client: { connect: { id: clientId } },
     };
 
-    return this.prisma.service.create({
+    return this.prisma.order.create({
       data,
     });
   }
 
   async findAll() {
-    return this.prisma.service.findMany({});
+    return this.prisma.order.findMany({});
   }
 
   async findOne(id: string) {
-    return this.prisma.service.findUnique({
+    return this.prisma.order.findUnique({
       where: { id },
       include,
     });
   }
 
-  async update(id: string, uncheckedData: Prisma.ServiceUncheckedUpdateInput) {
-    const data: Prisma.ServiceUpdateInput = { ...uncheckedData };
-
-    return this.prisma.service.update({
-      where: { id },
-      data,
-    });
-  }
-
   async remove(id: string) {
-    return this.prisma.service.delete({
+    return this.prisma.order.delete({
       where: { id },
     });
   }

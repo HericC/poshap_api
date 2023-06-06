@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ServicesModule } from './services/services.module';
+import { OrdersModule } from './orders/orders.module';
 
 const throttlerGuard = { provide: APP_GUARD, useClass: ThrottlerGuard };
 
@@ -17,6 +18,7 @@ const throttlerGuard = { provide: APP_GUARD, useClass: ThrottlerGuard };
     UsersModule,
     AuthModule,
     ServicesModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService, throttlerGuard],
