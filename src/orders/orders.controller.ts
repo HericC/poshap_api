@@ -1,6 +1,5 @@
 import {
   Controller,
-  Request,
   Get,
   Post,
   Body,
@@ -9,6 +8,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { UserRequest } from '../auth/decorators/user-request.decorator';
+import { UserJwt } from '../auth/strategies/jwt.strategy';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -21,31 +22,34 @@ export class OrdersController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Request() req: any, @Body() createOrderDto: CreateOrderDto) {
-    return this.ordersService.create(createOrderDto, req.user.id);
+  async create(
+    @UserRequest() user: UserJwt,
+    @Body() createOrderDto: CreateOrderDto,
+  ) {
+    return this.ordersService.create(createOrderDto, user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('provider')
-  async findAllProvider(@Request() req: any) {
-    return this.ordersService.findAllProvider(req.user.id);
+  async findAllProvider(@UserRequest() user: UserJwt) {
+    return this.ordersService.findAllProvider(user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('client')
-  async findAllClient(@Request() req: any) {
-    return this.ordersService.findAllClient(req.user.id);
+  async findAllClient(@UserRequest() user: UserJwt) {
+    return this.ordersService.findAllClient(user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async findOne(@Request() req: any, @Param('id') id: string) {
-    return this.ordersService.findOne(id, req.user.id);
+  async findOne(@UserRequest() user: UserJwt, @Param('id') id: string) {
+    return this.ordersService.findOne(id, user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async remove(@Request() req: any, @Param('id') id: string) {
-    return this.ordersService.remove(id, req.user.id);
+  async remove(@UserRequest() user: UserJwt, @Param('id') id: string) {
+    return this.ordersService.remove(id, user.id);
   }
 }

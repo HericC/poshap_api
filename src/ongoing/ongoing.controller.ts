@@ -1,6 +1,5 @@
 import {
   Controller,
-  Request,
   Get,
   Post,
   Body,
@@ -9,6 +8,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { UserRequest } from '../auth/decorators/user-request.decorator';
+import { UserJwt } from '../auth/strategies/jwt.strategy';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { OngoingService } from './ongoing.service';
 import { CreateOngoingDto } from './dto/create-ongoing.dto';
@@ -22,39 +23,39 @@ export class OngoingController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(
-    @Request() req: any,
+    @UserRequest() user: UserJwt,
     @Body() createOngoingDto: CreateOngoingDto,
   ) {
-    return this.ongoingService.create(createOngoingDto, req.user.id);
+    return this.ongoingService.create(createOngoingDto, user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('provider')
-  async findAllProvider(@Request() req: any) {
-    return this.ongoingService.findAllProvider(req.user.id);
+  async findAllProvider(@UserRequest() user: UserJwt) {
+    return this.ongoingService.findAllProvider(user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('client')
-  async findAllClient(@Request() req: any) {
-    return this.ongoingService.findAllClient(req.user.id);
+  async findAllClient(@UserRequest() user: UserJwt) {
+    return this.ongoingService.findAllClient(user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async findOne(@Request() req: any, @Param('id') id: string) {
-    return this.ongoingService.findOne(id, req.user.id);
+  async findOne(@UserRequest() user: UserJwt, @Param('id') id: string) {
+    return this.ongoingService.findOne(id, user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch('finished/:id')
-  async finished(@Request() req: any, @Param('id') id: string) {
-    return this.ongoingService.finished(id, req.user.id);
+  async finished(@UserRequest() user: UserJwt, @Param('id') id: string) {
+    return this.ongoingService.finished(id, user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch('canceled/:id')
-  async canceled(@Request() req: any, @Param('id') id: string) {
-    return this.ongoingService.canceled(id, req.user.id);
+  async canceled(@UserRequest() user: UserJwt, @Param('id') id: string) {
+    return this.ongoingService.canceled(id, user.id);
   }
 }

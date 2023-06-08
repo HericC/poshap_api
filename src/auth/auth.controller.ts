@@ -1,5 +1,7 @@
-import { Controller, Request, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { User } from '@prisma/client';
+import { UserRequest } from './decorators/user-request.decorator';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local.auth.guard';
 import { AuthUserDto } from './dto/auth-user.dto';
@@ -12,7 +14,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async login(@Request() req, @Body() authUserDto: AuthUserDto) {
-    return this.authService.login(req.user);
+  async login(@UserRequest() user: User, @Body() authUserDto: AuthUserDto) {
+    return this.authService.login(user);
   }
 }

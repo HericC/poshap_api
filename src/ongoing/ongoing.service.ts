@@ -3,7 +3,7 @@ import { CreateOngoingDto } from './dto/create-ongoing.dto';
 import { OngoingRepository } from './repositories/ongoing.prisma.repository';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { OrdersService } from '../orders/orders.service';
-import { UnauthorizedError } from 'src/common/errors/unauthorized.error';
+import { UnauthorizedError } from '../common/errors/unauthorized.error';
 
 @Injectable()
 export class OngoingService {

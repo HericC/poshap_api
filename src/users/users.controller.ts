@@ -1,6 +1,5 @@
 import {
   Controller,
-  Request,
   Get,
   Post,
   Body,
@@ -10,6 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { UserRequest } from '../auth/decorators/user-request.decorator';
+import { UserJwt } from '../auth/strategies/jwt.strategy';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -35,16 +36,16 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(
-    @Request() req: any,
+    @UserRequest() user: UserJwt,
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.usersService.update(id, updateUserDto, req.user.id);
+    return this.usersService.update(id, updateUserDto, user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async remove(@Request() req: any, @Param('id') id: string) {
-    return this.usersService.remove(id, req.user.id);
+  async remove(@UserRequest() user: UserJwt, @Param('id') id: string) {
+    return this.usersService.remove(id, user.id);
   }
 }
