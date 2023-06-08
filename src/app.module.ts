@@ -11,11 +11,13 @@ import { OrdersModule } from './orders/orders.module';
 import { OngoingModule } from './ongoing/ongoing.module';
 
 const throttlerGuard = { provide: APP_GUARD, useClass: ThrottlerGuard };
+const ttl = +process.env.THROTTLER_TTL || 60;
+const limit = +process.env.THROTTLER_LIMIT || 10;
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, cache: true }),
-    ThrottlerModule.forRoot({ ttl: 60, limit: 10 }),
+    ThrottlerModule.forRoot({ ttl, limit }),
     UsersModule,
     AuthModule,
     ServicesModule,
