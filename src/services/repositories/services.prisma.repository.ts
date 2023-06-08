@@ -31,8 +31,11 @@ export class ServicesRepository {
     });
   }
 
-  async findAll() {
-    return this.prisma.service.findMany({});
+  async findAll(where: Prisma.ServiceWhereInput) {
+    return this.prisma.service.findMany({
+      where,
+      orderBy: [{ priority: 'desc' }],
+    });
   }
 
   async findOne(id: string) {

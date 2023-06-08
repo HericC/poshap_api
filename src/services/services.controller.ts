@@ -45,15 +45,16 @@ export class ServicesController {
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(
+    @Request() req: any,
     @Param('id') id: string,
     @Body() updateServiceDto: UpdateServiceDto,
   ) {
-    return this.servicesService.update(id, updateServiceDto);
+    return this.servicesService.update(id, updateServiceDto, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return this.servicesService.remove(id);
+  async remove(@Request() req: any, @Param('id') id: string) {
+    return this.servicesService.remove(id, req.user.id);
   }
 }

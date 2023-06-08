@@ -3,7 +3,7 @@ import { OngoingService } from './ongoing.service';
 import { OngoingController } from './ongoing.controller';
 import { OngoingRepository } from './repositories/ongoing.prisma.repository';
 import { PrismaService } from '../prisma/prisma.service';
-import { OrdersModule } from 'src/orders/orders.module';
+import { OrdersModule } from '../orders/orders.module';
 
 @Module({
   imports: [OrdersModule],

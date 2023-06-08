@@ -3,6 +3,8 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { OrdersRepository } from './repositories/orders.prisma.repository';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { ServicesService } from '../services/services.service';
+import { UnauthorizedError } from '../common/errors/unauthorized.error';
+import { DatabaseError } from '../common/errors/database.error';
 
 @Injectable()
 export class OrdersService {
@@ -16,6 +18,9 @@ export class OrdersService {
       createOrderDto.serviceId,
     );
 
+    if (service.providerId === userId)
+      throw new DatabaseError('Não pode solicitar o seu proprio serviço.');
+
     return this.ordersRepository.create({
       category: service.category,
       price: service.price,
@@ -28,18 +33,32 @@ export class OrdersService {
     });
   }
 
-  async findAll() {
-    return this.ordersRepository.findAll();
+  async findAllProvider(userId: string) {
+    return this.ordersRepository.findAll({ providerId: userId });
   }
 
-  async findOne(id: string) {
-    const user = await this.ordersRepository.findOne(id);
-    if (!user)
+  async findAllClient(userId: string) {
+    return this.ordersRepository.findAll({ clientId: userId });
+  }
+
+  async findOne(id: string, userId: string) {
+    const order = await this.ordersRepository.findOne(id);
+
+    if (!order)
       throw new NotFoundError('Solicitação de serviço não encontrada.');
-    return user;
+
+    if (!(order.providerId === userId || order.clientId === userId))
+      throw new UnauthorizedError('Não possui permissão.');
+
+    return order;
   }
 
-  async remove(id: string) {
+  async remove(id: string, userId: string) {
+    const order = await this.findOne(id, userId);
+
+    if (!(order.providerId === userId || order.clientId === userId))
+      throw new UnauthorizedError('Não possui permissão.');
+
     return this.ordersRepository.remove(id);
   }
 }

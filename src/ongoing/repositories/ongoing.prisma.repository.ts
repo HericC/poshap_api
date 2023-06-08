@@ -42,8 +42,8 @@ export class OngoingRepository {
     });
   }
 
-  async findAll() {
-    return this.prisma.ongoing.findMany({});
+  async findAll(where: Prisma.OngoingWhereInput) {
+    return this.prisma.ongoing.findMany({ where });
   }
 
   async findOne(id: string) {

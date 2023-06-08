@@ -42,8 +42,8 @@ export class OrdersRepository {
     });
   }
 
-  async findAll() {
-    return this.prisma.order.findMany({});
+  async findAll(where: Prisma.OrderWhereInput) {
+    return this.prisma.order.findMany({ where });
   }
 
   async findOne(id: string) {

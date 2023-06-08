@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './repositories/users.prisma.repository';
 import { NotFoundError } from '../common/errors/not-found.error';
+import { UnauthorizedError } from '../common/errors/unauthorized.error';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -14,17 +15,15 @@ export class UsersService {
     return this.usersRepository.create({ ...createUserDto, password: hash });
   }
 
-  async findAll() {
-    return this.usersRepository.findAll();
-  }
-
   async findOne(id: string) {
     const user = await this.usersRepository.findOne(id);
     if (!user) throw new NotFoundError('Usuário não encontrado.');
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto, userId: string) {
+    if (id !== userId) throw new UnauthorizedError('Não possui permissão.');
+
     let hash: string;
     if (updateUserDto.password)
       hash = await bcrypt.hash(updateUserDto.password, 8);
@@ -35,7 +34,8 @@ export class UsersService {
     });
   }
 
-  async remove(id: string) {
+  async remove(id: string, userId: string) {
+    if (id !== userId) throw new UnauthorizedError('Não possui permissão.');
     return this.usersRepository.remove(id);
   }
 }

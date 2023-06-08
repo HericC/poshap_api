@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 
@@ -26,20 +26,26 @@ export class OrdersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get()
-  async findAll() {
-    return this.ordersService.findAll();
+  @Get('provider')
+  async findAllProvider(@Request() req: any) {
+    return this.ordersService.findAllProvider(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('client')
+  async findAllClient(@Request() req: any) {
+    return this.ordersService.findAllClient(req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.ordersService.findOne(id);
+  async findOne(@Request() req: any, @Param('id') id: string) {
+    return this.ordersService.findOne(id, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return this.ordersService.remove(id);
+  async remove(@Request() req: any, @Param('id') id: string) {
+    return this.ordersService.remove(id, req.user.id);
   }
 }

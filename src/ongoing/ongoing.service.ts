@@ -3,6 +3,7 @@ import { CreateOngoingDto } from './dto/create-ongoing.dto';
 import { OngoingRepository } from './repositories/ongoing.prisma.repository';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { OrdersService } from '../orders/orders.service';
+import { UnauthorizedError } from 'src/common/errors/unauthorized.error';
 
 @Injectable()
 export class OngoingService {
@@ -11,8 +12,16 @@ export class OngoingService {
     private readonly orderService: OrdersService,
   ) {}
 
-  async create(createOngoingDto: CreateOngoingDto) {
-    const order = await this.orderService.findOne(createOngoingDto.orderId);
+  async create(createOngoingDto: CreateOngoingDto, userId: string) {
+    const order = await this.orderService.findOne(
+      createOngoingDto.orderId,
+      userId,
+    );
+
+    if (order.providerId !== userId)
+      throw new UnauthorizedError('Não possui permissão.');
+
+    await this.orderService.remove(createOngoingDto.orderId, userId);
 
     return this.ongoingRepository.create({
       category: order.category,
@@ -23,36 +32,52 @@ export class OngoingService {
     });
   }
 
-  async findAll() {
-    return this.ongoingRepository.findAll();
+  async findAllProvider(userId: string) {
+    return this.ongoingRepository.findAll({ providerId: userId });
   }
 
-  async findOne(id: string) {
-    const user = await this.ongoingRepository.findOne(id);
-    if (!user) throw new NotFoundError('Serviço em andamento não encontrado.');
-    return user;
+  async findAllClient(userId: string) {
+    return this.ongoingRepository.findAll({ clientId: userId });
   }
 
-  async finished(id: string) {
-    const ongoing = await this.findOne(id);
+  async findOne(id: string, userId: string) {
+    const ongoing = await this.ongoingRepository.findOne(id);
+
+    if (!ongoing)
+      throw new NotFoundError('Serviço em andamento não encontrado.');
+
+    if (!(ongoing.providerId === userId || ongoing.clientId === userId))
+      throw new UnauthorizedError('Não possui permissão.');
+
+    return ongoing;
+  }
+
+  async finished(id: string, userId: string) {
+    const ongoing = await this.findOne(id, userId);
+
+    if (ongoing.providerId !== userId)
+      throw new UnauthorizedError('Não possui permissão.');
 
     if (ongoing.finishedDate)
-      throw new NotFoundError('Serviço em andamento já foi finalizado.');
+      throw new NotFoundError('O serviço em andamento já foi finalizado.');
 
     if (ongoing.canceledDate)
-      throw new NotFoundError('Serviço em andamento já foi cancelado.');
+      throw new NotFoundError('O serviço em andamento já foi cancelado.');
 
     return this.ongoingRepository.update(id, { finishedDate: new Date() });
   }
 
-  async canceled(id: string) {
-    const ongoing = await this.findOne(id);
+  async canceled(id: string, userId: string) {
+    const ongoing = await this.findOne(id, userId);
+
+    if (!(ongoing.providerId === userId || ongoing.clientId === userId))
+      throw new UnauthorizedError('Não possui permissão.');
 
     if (ongoing.finishedDate)
-      throw new NotFoundError('Serviço em andamento já foi finalizado.');
+      throw new NotFoundError('O serviço em andamento já foi finalizado.');
 
     if (ongoing.canceledDate)
-      throw new NotFoundError('Serviço em andamento já foi cancelado.');
+      throw new NotFoundError('O serviço em andamento já foi cancelado.');
 
     return this.ongoingRepository.update(id, { canceledDate: new Date() });
   }
