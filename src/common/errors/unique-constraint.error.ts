@@ -3,7 +3,6 @@ import { PrismaClientError } from './prisma-client.error';
 
 enum AttributeTraductionBR {
   email = 'E-mail',
-  status = 'Status',
 }
 
 const formatTarget = (target: string | unknown) => {

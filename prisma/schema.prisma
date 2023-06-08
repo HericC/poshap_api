@@ -11,17 +11,19 @@ datasource db {
 }
 
 model User {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  name           String
-  email          String    @unique
-  phone          String
-  password       String
-  services       Service[]
-  ordersProvider Order[]   @relation(name: "provider")
-  ordersClient   Order[]   @relation(name: "client")
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @default(now()) @updatedAt
-  deletedAt      DateTime?
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String    @unique
+  phone           String
+  password        String
+  services        Service[]
+  ordersProvider  Order[]   @relation(name: "ordersProvider")
+  ordersClient    Order[]   @relation(name: "ordersClient")
+  ongoingProvider Ongoing[] @relation(name: "ongoingProvider")
+  ongoingClient   Ongoing[] @relation(name: "ongoingClient")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now()) @updatedAt
+  deletedAt       DateTime?
 
   @@map("user")
 }
@@ -54,11 +56,29 @@ model Order {
   providerSecondSchedulingConfirmationDate DateTime?
   providerId                               String    @db.ObjectId
   clientId                                 String    @db.ObjectId
-  provider                                 User      @relation(fields: [providerId], references: [id], name: "provider")
-  client                                   User      @relation(fields: [clientId], references: [id], name: "client")
+  provider                                 User      @relation(fields: [providerId], references: [id], name: "ordersProvider")
+  client                                   User      @relation(fields: [clientId], references: [id], name: "ordersClient")
   createdAt                                DateTime  @default(now())
   updatedAt                                DateTime  @default(now()) @updatedAt
   deletedAt                                DateTime?
 
   @@map("order")
+}
+
+model Ongoing {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  category     String
+  price        Float
+  description  String?
+  finishedDate DateTime?
+  canceledDate DateTime?
+  providerId   String    @db.ObjectId
+  clientId     String    @db.ObjectId
+  provider     User      @relation(fields: [providerId], references: [id], name: "ongoingProvider")
+  client       User      @relation(fields: [clientId], references: [id], name: "ongoingClient")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now()) @updatedAt
+  deletedAt    DateTime?
+
+  @@map("ongoing")
 }

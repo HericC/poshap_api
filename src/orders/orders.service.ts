@@ -15,7 +15,6 @@ export class OrdersService {
     const service = await this.servicesService.findOne(
       createOrderDto.serviceId,
     );
-    if (!service) throw new NotFoundError('Serviço não encontrado.');
 
     return this.ordersRepository.create({
       category: service.category,
@@ -35,11 +34,12 @@ export class OrdersService {
 
   async findOne(id: string) {
     const user = await this.ordersRepository.findOne(id);
-    if (!user) throw new NotFoundError('Solicitação não encontrada.');
+    if (!user)
+      throw new NotFoundError('Solicitação de serviço não encontrada.');
     return user;
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     return this.ordersRepository.remove(id);
   }
 }

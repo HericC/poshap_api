@@ -9,5 +9,6 @@ import { ServicesModule } from '../services/services.module';
   imports: [ServicesModule],
   controllers: [OrdersController],
   providers: [OrdersService, OrdersRepository, PrismaService],
+  exports: [OrdersService],
 })
 export class OrdersModule {}
