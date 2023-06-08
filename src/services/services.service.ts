@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
+import { FilterServiceDto } from './dto/filter-service.dto';
 import { ServicesRepository } from './repositories/services.prisma.repository';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { UnauthorizedError } from '../common/errors/unauthorized.error';
@@ -16,8 +17,32 @@ export class ServicesService {
     });
   }
 
-  async findAll() {
-    return this.servicesRepository.findAll({});
+  async findAll(filter: FilterServiceDto) {
+    const {
+      search,
+      minPrice,
+      maxPrice,
+      minWaiting,
+      maxWaiting,
+      minDistance,
+      maxDistance,
+      rating,
+      categories,
+    } = filter;
+
+    return this.servicesRepository.findAll({
+      OR: search
+        ? [
+            { category: { contains: search, mode: 'insensitive' } },
+            { description: { contains: search, mode: 'insensitive' } },
+          ]
+        : undefined,
+      price: {
+        gte: minPrice ? parseFloat(minPrice) : undefined,
+        lte: maxPrice ? parseFloat(maxPrice) : undefined,
+      },
+      category: { in: categories, mode: 'insensitive' },
+    });
   }
 
   async findOne(id: string) {

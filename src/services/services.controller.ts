@@ -5,6 +5,7 @@ import {
   Body,
   Patch,
   Param,
+  Query,
   Delete,
   UseGuards,
 } from '@nestjs/common';
@@ -15,6 +16,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
+import { FilterServiceDto } from './dto/filter-service.dto';
 
 @ApiBearerAuth()
 @ApiTags('services')
@@ -33,8 +35,8 @@ export class ServicesController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async findAll() {
-    return this.servicesService.findAll();
+  async findAll(@Query() query: FilterServiceDto) {
+    return this.servicesService.findAll(query);
   }
 
   @UseGuards(JwtAuthGuard)
