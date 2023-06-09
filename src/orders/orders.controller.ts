@@ -8,8 +8,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { UserRequest } from '../auth/decorators/user-request.decorator';
-import { UserJwt } from '../auth/strategies/jwt.strategy';
+import {
+  UserJwt,
+  UserRequest,
+} from '../auth/decorators/user-request.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
