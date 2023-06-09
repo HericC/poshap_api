@@ -4,7 +4,6 @@ import { OrdersRepository } from './repositories/orders.prisma.repository';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { ServicesService } from '../services/services.service';
 import { ForbiddenError } from '../common/errors/forbidden.error';
-import { DatabaseError } from '../common/errors/database.error';
 
 @Injectable()
 export class OrdersService {
@@ -20,6 +19,16 @@ export class OrdersService {
 
     if (service.providerId === userId)
       throw new ForbiddenError('Não pode solicitar o seu proprio serviço.');
+
+    const orders = await this.ordersRepository.findAll({
+      providerId: service.providerId,
+      clientId: userId,
+    });
+
+    if (orders.length)
+      throw new ForbiddenError(
+        'Não pode solicitar mais serviços desse usuário.',
+      );
 
     return this.ordersRepository.create({
       category: service.category,
