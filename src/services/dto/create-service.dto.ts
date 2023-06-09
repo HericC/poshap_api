@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Min,
 } from 'class-validator';
 
 export class CreateServiceDto {
@@ -16,6 +17,7 @@ export class CreateServiceDto {
   @ApiProperty()
   @IsNumber({}, { message: 'O preço deve ser um número' })
   @IsNotEmpty({ message: 'É necessário informar o preço' })
+  @Min(1, { message: 'Preço mínimo 1 real' })
   price: number;
 
   @ApiProperty()
