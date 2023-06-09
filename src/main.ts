@@ -11,7 +11,8 @@ import helmet from 'helmet';
 
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { TrimPipe } from './common/pipes/trim-pipe';
+import { RemoveFormattingPipe } from './common/pipes/remove-formatting.pipe';
+import { TrimPipe } from './common/pipes/trim.pipe';
 import { ConflictInterceptor } from './common/interceptors/conflict.interceptor';
 import { PrismaInterceptor } from './common/interceptors/prisma.interceptor';
 import { NotFoundInterceptor } from './common/interceptors/not-found.interceptor';
@@ -44,6 +45,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.useGlobalPipes(new RemoveFormattingPipe());
   app.useGlobalPipes(new TrimPipe());
 
   // Interceptors
