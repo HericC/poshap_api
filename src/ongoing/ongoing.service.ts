@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOngoingDto } from './dto/create-ongoing.dto';
+import { FilterOngoingDto } from './dto/filter-ongoing.dto';
 import { OngoingRepository } from './repositories/ongoing.prisma.repository';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { OrdersService } from '../orders/orders.service';
@@ -32,12 +33,24 @@ export class OngoingService {
     });
   }
 
-  async findAllProvider(userId: string) {
-    return this.ongoingRepository.findAll({ providerId: userId });
+  async findAllProvider(filter: FilterOngoingDto, userId: string) {
+    const { status } = filter;
+
+    return this.ongoingRepository.findAll({
+      providerId: userId,
+      finishedDate: status ? { isSet: status === 'finished' } : undefined,
+      canceledDate: status ? { isSet: status === 'canceled' } : undefined,
+    });
   }
 
-  async findAllClient(userId: string) {
-    return this.ongoingRepository.findAll({ clientId: userId });
+  async findAllClient(filter: FilterOngoingDto, userId: string) {
+    const { status } = filter;
+
+    return this.ongoingRepository.findAll({
+      clientId: userId,
+      finishedDate: status ? { isSet: status === 'finished' } : undefined,
+      canceledDate: status ? { isSet: status === 'canceled' } : undefined,
+    });
   }
 
   async findOne(id: string, userId: string) {

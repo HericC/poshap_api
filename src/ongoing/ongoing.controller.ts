@@ -5,6 +5,7 @@ import {
   Body,
   Patch,
   Param,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -13,6 +14,7 @@ import { UserJwt } from '../auth/strategies/jwt.strategy';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { OngoingService } from './ongoing.service';
 import { CreateOngoingDto } from './dto/create-ongoing.dto';
+import { FilterOngoingDto } from './dto/filter-ongoing.dto';
 
 @ApiBearerAuth()
 @ApiTags('ongoing')
@@ -31,14 +33,20 @@ export class OngoingController {
 
   @UseGuards(JwtAuthGuard)
   @Get('provider')
-  async findAllProvider(@UserRequest() user: UserJwt) {
-    return this.ongoingService.findAllProvider(user.id);
+  async findAllProvider(
+    @UserRequest() user: UserJwt,
+    @Query() query: FilterOngoingDto,
+  ) {
+    return this.ongoingService.findAllProvider(query, user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('client')
-  async findAllClient(@UserRequest() user: UserJwt) {
-    return this.ongoingService.findAllClient(user.id);
+  async findAllClient(
+    @UserRequest() user: UserJwt,
+    @Query() query: FilterOngoingDto,
+  ) {
+    return this.ongoingService.findAllClient(query, user.id);
   }
 
   @UseGuards(JwtAuthGuard)
