@@ -22,6 +22,13 @@ export class OngoingService {
     if (order.providerId !== userId)
       throw new ForbiddenError('Não possui permissão.');
 
+    const ongoing = await this.ongoingRepository.findOneByProvider(
+      order.providerId,
+    );
+
+    if (ongoing.length)
+      throw new ForbiddenError('Não pode ter mais de 1 serviço em andamento.');
+
     await this.orderService.remove(createOngoingDto.orderId, userId);
 
     return this.ongoingRepository.create({

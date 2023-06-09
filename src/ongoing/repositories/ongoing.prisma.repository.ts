@@ -53,6 +53,17 @@ export class OngoingRepository {
     });
   }
 
+  async findOneByProvider(providerId: string) {
+    return this.prisma.ongoing.findMany({
+      where: {
+        providerId,
+        finishedDate: { isSet: false },
+        canceledDate: { isSet: false },
+      },
+      include,
+    });
+  }
+
   async update(
     id: string,
     uncheckedData: { finishedDate?: Date; canceledDate?: Date },
