@@ -4,7 +4,7 @@ import { FilterOngoingDto } from './dto/filter-ongoing.dto';
 import { OngoingRepository } from './repositories/ongoing.prisma.repository';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { OrdersService } from '../orders/orders.service';
-import { UnauthorizedError } from '../common/errors/unauthorized.error';
+import { ForbiddenError } from '../common/errors/forbidden.error';
 
 @Injectable()
 export class OngoingService {
@@ -20,7 +20,7 @@ export class OngoingService {
     );
 
     if (order.providerId !== userId)
-      throw new UnauthorizedError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão.');
 
     await this.orderService.remove(createOngoingDto.orderId, userId);
 
@@ -60,7 +60,7 @@ export class OngoingService {
       throw new NotFoundError('Serviço em andamento não encontrado.');
 
     if (!(ongoing.providerId === userId || ongoing.clientId === userId))
-      throw new UnauthorizedError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão.');
 
     return ongoing;
   }
@@ -69,13 +69,13 @@ export class OngoingService {
     const ongoing = await this.findOne(id, userId);
 
     if (ongoing.providerId !== userId)
-      throw new UnauthorizedError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão.');
 
     if (ongoing.finishedDate)
-      throw new NotFoundError('O serviço em andamento já foi finalizado.');
+      throw new ForbiddenError('O serviço em andamento já foi finalizado.');
 
     if (ongoing.canceledDate)
-      throw new NotFoundError('O serviço em andamento já foi cancelado.');
+      throw new ForbiddenError('O serviço em andamento já foi cancelado.');
 
     return this.ongoingRepository.update(id, { finishedDate: new Date() });
   }
@@ -84,13 +84,13 @@ export class OngoingService {
     const ongoing = await this.findOne(id, userId);
 
     if (!(ongoing.providerId === userId || ongoing.clientId === userId))
-      throw new UnauthorizedError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão.');
 
     if (ongoing.finishedDate)
-      throw new NotFoundError('O serviço em andamento já foi finalizado.');
+      throw new ForbiddenError('O serviço em andamento já foi finalizado.');
 
     if (ongoing.canceledDate)
-      throw new NotFoundError('O serviço em andamento já foi cancelado.');
+      throw new ForbiddenError('O serviço em andamento já foi cancelado.');
 
     return this.ongoingRepository.update(id, { canceledDate: new Date() });
   }

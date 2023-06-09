@@ -16,6 +16,7 @@ import { TrimPipe } from './common/pipes/trim.pipe';
 import { ConflictInterceptor } from './common/interceptors/conflict.interceptor';
 import { PrismaInterceptor } from './common/interceptors/prisma.interceptor';
 import { NotFoundInterceptor } from './common/interceptors/not-found.interceptor';
+import { ForbiddenInterceptor } from './common/interceptors/forbidden.interceptor';
 import { UnauthorizedInterceptor } from './common/interceptors/unauthorized.interceptor';
 
 async function bootstrap() {
@@ -52,6 +53,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ConflictInterceptor());
   app.useGlobalInterceptors(new PrismaInterceptor());
   app.useGlobalInterceptors(new NotFoundInterceptor());
+  app.useGlobalInterceptors(new ForbiddenInterceptor());
   app.useGlobalInterceptors(new UnauthorizedInterceptor());
 
   // Swagger

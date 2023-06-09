@@ -4,7 +4,7 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { FilterServiceDto } from './dto/filter-service.dto';
 import { ServicesRepository } from './repositories/services.prisma.repository';
 import { NotFoundError } from '../common/errors/not-found.error';
-import { UnauthorizedError } from '../common/errors/unauthorized.error';
+import { ForbiddenError } from '../common/errors/forbidden.error';
 
 @Injectable()
 export class ServicesService {
@@ -55,7 +55,7 @@ export class ServicesService {
     const service = await this.findOne(id);
 
     if (service.providerId !== userId)
-      throw new UnauthorizedError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão.');
 
     return this.servicesRepository.update(id, updateServiceDto);
   }
@@ -64,7 +64,7 @@ export class ServicesService {
     const service = await this.findOne(id);
 
     if (service.providerId !== userId)
-      throw new UnauthorizedError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão.');
 
     return this.servicesRepository.remove(id);
   }

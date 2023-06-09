@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './repositories/users.prisma.repository';
 import { NotFoundError } from '../common/errors/not-found.error';
-import { UnauthorizedError } from '../common/errors/unauthorized.error';
+import { ForbiddenError } from '../common/errors/forbidden.error';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto, userId: string) {
-    if (id !== userId) throw new UnauthorizedError('Não possui permissão.');
+    if (id !== userId) throw new ForbiddenError('Não possui permissão.');
 
     let hash: string;
     if (updateUserDto.password)
@@ -35,7 +35,7 @@ export class UsersService {
   }
 
   async remove(id: string, userId: string) {
-    if (id !== userId) throw new UnauthorizedError('Não possui permissão.');
+    if (id !== userId) throw new ForbiddenError('Não possui permissão.');
     return this.usersRepository.remove(id);
   }
 }

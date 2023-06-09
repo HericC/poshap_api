@@ -3,7 +3,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { OrdersRepository } from './repositories/orders.prisma.repository';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { ServicesService } from '../services/services.service';
-import { UnauthorizedError } from '../common/errors/unauthorized.error';
+import { ForbiddenError } from '../common/errors/forbidden.error';
 import { DatabaseError } from '../common/errors/database.error';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class OrdersService {
     );
 
     if (service.providerId === userId)
-      throw new DatabaseError('Não pode solicitar o seu proprio serviço.');
+      throw new ForbiddenError('Não pode solicitar o seu proprio serviço.');
 
     return this.ordersRepository.create({
       category: service.category,
@@ -48,7 +48,7 @@ export class OrdersService {
       throw new NotFoundError('Solicitação de serviço não encontrada.');
 
     if (!(order.providerId === userId || order.clientId === userId))
-      throw new UnauthorizedError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão.');
 
     return order;
   }
@@ -57,7 +57,7 @@ export class OrdersService {
     const order = await this.findOne(id, userId);
 
     if (!(order.providerId === userId || order.clientId === userId))
-      throw new UnauthorizedError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão.');
 
     return this.ordersRepository.remove(id);
   }
