@@ -1,18 +1,13 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
-## Description
+# Poshap API
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+APP de fornecimento de serviços gerais.
+
+Para testar a api, clone o repositório pela url: "https://github.com/HericC/poshap_api.git". \
+Abra o terminal e execute: "npm run init". \
+Crie o arquivo ".env" na raiz do projeto e configure de acordo com o arquivo de exemplo: ".env.example". \
+Abra o terminal e execute: "npm run start".
 
 ## Installation
 
@@ -68,4 +63,4 @@ $ npm run test:cov
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+This project is under the MIT license - see the [LICENSE.md](LICENSE) file for details
