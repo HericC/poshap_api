@@ -25,7 +25,7 @@ export class CreateServiceDto {
   @IsOptional()
   description: string;
 
-  @ApiProperty()
+  @ApiProperty({ default: false })
   @IsBoolean({
     message: 'A disponibilidade de agendamento deve ser um boleano',
   })
@@ -34,7 +34,7 @@ export class CreateServiceDto {
   })
   scheduling: boolean;
 
-  @ApiProperty()
+  @ApiProperty({ default: false })
   @IsBoolean({ message: 'A prioridade de publicação deve ser um boleano' })
   @IsNotEmpty({ message: 'É necessário informar a prioridade de publicação' })
   priority: boolean;

@@ -3,14 +3,26 @@ import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { FilterServiceDto } from './dto/filter-service.dto';
 import { ServicesRepository } from './repositories/services.prisma.repository';
+import { UsersService } from '../users/users.service';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { ForbiddenError } from '../common/errors/forbidden.error';
 
 @Injectable()
 export class ServicesService {
-  constructor(private readonly servicesRepository: ServicesRepository) {}
+  constructor(
+    private readonly servicesRepository: ServicesRepository,
+    private readonly usersService: UsersService,
+  ) {}
 
   async create(createServiceDto: CreateServiceDto, userId: string) {
+    if (createServiceDto.scheduling) {
+      const user = await this.usersService.findOne(userId);
+      if (user.planKey !== 'gold')
+        throw new ForbiddenError(
+          'Plano incompatível com a opção de agendamento.',
+        );
+    }
+
     return this.servicesRepository.create({
       ...createServiceDto,
       providerId: userId,

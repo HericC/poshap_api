@@ -20,6 +20,9 @@ export class OrdersService {
     if (service.providerId === userId)
       throw new ForbiddenError('Não pode solicitar o seu proprio serviço.');
 
+    if (createOrderDto.schedulingDate && !service.scheduling)
+      throw new ForbiddenError('Serviço não possui a opção de agendamento.');
+
     const orders = await this.ordersRepository.findAll({
       providerId: service.providerId,
       clientId: userId,
