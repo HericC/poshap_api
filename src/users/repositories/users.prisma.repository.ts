@@ -66,7 +66,13 @@ export class UsersRepository {
   }
 
   async update(id: string, uncheckedData: Prisma.UserUncheckedUpdateInput) {
-    const data: Prisma.UserUpdateInput = { ...uncheckedData };
+    const planKey = uncheckedData.planKey.toString();
+    delete uncheckedData.planKey;
+
+    const data: Prisma.UserUpdateInput = {
+      ...uncheckedData,
+      plan: { connect: { key: planKey } },
+    };
 
     return this.prisma.user.update({
       where: { id },

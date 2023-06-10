@@ -47,6 +47,15 @@ export class UsersService {
     });
   }
 
+  async updatePlan(id: string, key: string) {
+    const plan = await this.plansRepository.findOne(key);
+    if (!plan) throw new DatabaseError('Plano não encontrado.');
+
+    // future implementation
+
+    return this.usersRepository.update(id, { planKey: key });
+  }
+
   async remove(id: string, userId: string) {
     if (id !== userId) throw new ForbiddenError('Não possui permissão.');
     return this.usersRepository.remove(id);

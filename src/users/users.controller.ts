@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Put,
+  Patch,
   Param,
   Delete,
   UseGuards,
@@ -43,6 +44,12 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.update(id, updateUserDto, user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('update-plan/:key')
+  async updatePlan(@UserRequest() user: UserJwt, @Param('key') key: string) {
+    return this.usersService.updatePlan(user.id, key);
   }
 
   @UseGuards(JwtAuthGuard)
