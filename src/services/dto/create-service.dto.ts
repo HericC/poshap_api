@@ -29,13 +29,11 @@ export class CreateServiceDto {
   @IsBoolean({
     message: 'A disponibilidade de agendamento deve ser um boleano',
   })
-  @IsNotEmpty({
-    message: 'É necessário informar a disponibilidade de agendamento',
-  })
+  @IsOptional()
   scheduling: boolean;
 
   @ApiProperty({ default: false })
   @IsBoolean({ message: 'A prioridade de publicação deve ser um boleano' })
-  @IsNotEmpty({ message: 'É necessário informar a prioridade de publicação' })
+  @IsOptional()
   priority: boolean;
 }

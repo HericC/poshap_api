@@ -15,17 +15,20 @@ export class ServicesService {
   ) {}
 
   async create(createServiceDto: CreateServiceDto, userId: string) {
-    if (createServiceDto.scheduling) {
-      const user = await this.usersService.findOne(userId);
-      if (user.planKey !== 'gold')
-        throw new ForbiddenError(
-          'Plano incompatível com a opção de agendamento.',
-        );
-    }
+    const user = await this.usersService.findOne(userId);
+
+    if (createServiceDto.scheduling && user.planKey !== 'gold')
+      throw new ForbiddenError(
+        'Plano incompatível com a opção de agendamento.',
+      );
+
+    const priority = user.planKey !== 'basic';
+    // if (!priority && createServiceDto.priority) future implementation
 
     return this.servicesRepository.create({
       ...createServiceDto,
       providerId: userId,
+      priority,
     });
   }
 
