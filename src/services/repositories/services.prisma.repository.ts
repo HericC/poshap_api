@@ -2,13 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 
-const include = {
+const include: Prisma.ServiceInclude = {
   provider: {
     select: {
       id: true,
       name: true,
       email: true,
       phone: true,
+      planKey: true,
+      planDate: true,
     },
   },
 };

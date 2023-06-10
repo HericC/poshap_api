@@ -2,23 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 
-const include = {
-  provider: {
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      phone: true,
-    },
-  },
-  client: {
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      phone: true,
-    },
-  },
+const user = {
+  id: true,
+  name: true,
+  email: true,
+  phone: true,
+  planKey: true,
+  planDate: true,
+};
+
+const include: Prisma.OngoingInclude = {
+  provider: { select: user },
+  client: { select: user },
 };
 
 @Injectable()

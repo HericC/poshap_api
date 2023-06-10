@@ -18,6 +18,7 @@ import { PrismaInterceptor } from './common/interceptors/prisma.interceptor';
 import { NotFoundInterceptor } from './common/interceptors/not-found.interceptor';
 import { ForbiddenInterceptor } from './common/interceptors/forbidden.interceptor';
 import { UnauthorizedInterceptor } from './common/interceptors/unauthorized.interceptor';
+import { SeedsService } from './seeds/seeds.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -75,6 +76,9 @@ async function bootstrap() {
     },
   };
   SwaggerModule.setup(APP_DOCS_PATH, app, document, customOptions);
+
+  // seed
+  await app.get(SeedsService).start();
 
   // Start server
   await app.listen(APP_PORT, () => {

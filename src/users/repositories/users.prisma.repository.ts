@@ -7,12 +7,15 @@ const select = {
   name: true,
   email: true,
   phone: true,
+  planKey: true,
+  planDate: true,
   createdAt: true,
   updatedAt: true,
   deletedAt: true,
 };
 
 const include = {
+  plan: true,
   services: {
     select: {
       id: true,
@@ -29,7 +32,13 @@ export class UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(uncheckedData: Prisma.UserUncheckedCreateInput) {
-    const data: Prisma.UserCreateInput = { ...uncheckedData };
+    const planKey = uncheckedData.planKey;
+    delete uncheckedData.planKey;
+
+    const data: Prisma.UserCreateInput = {
+      ...uncheckedData,
+      plan: { connect: { key: planKey } },
+    };
 
     return this.prisma.user.create({
       data,

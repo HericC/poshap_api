@@ -4,6 +4,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { SeedsModule } from './seeds/seeds.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ServicesModule } from './services/services.module';
@@ -18,6 +19,7 @@ const limit = +process.env.THROTTLER_LIMIT || 10;
   imports: [
     ConfigModule.forRoot({ isGlobal: true, cache: true }),
     ThrottlerModule.forRoot({ ttl, limit }),
+    SeedsModule,
     UsersModule,
     AuthModule,
     ServicesModule,

@@ -2,17 +2,30 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './repositories/users.prisma.repository';
+import { PlansRepository } from './repositories/plans.prisma.repository';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { ForbiddenError } from '../common/errors/forbidden.error';
+import { DatabaseError } from '../common/errors/database.error';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly plansRepository: PlansRepository,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
+    const plan = await this.plansRepository.findOne('basic');
+    if (!plan) throw new DatabaseError('Não foi possivel registrar o usuário.');
+
     const hash = await bcrypt.hash(createUserDto.password, 8);
-    return this.usersRepository.create({ ...createUserDto, password: hash });
+    return this.usersRepository.create({
+      ...createUserDto,
+      password: hash,
+      planKey: plan.key,
+      planDate: new Date(),
+    });
   }
 
   async findOne(id: string) {

@@ -10,12 +10,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Plan {
+  key            String    @id @map("_id")
+  name           String    @unique
+  description    String
+  monthlyPrice   Float
+  quarterlyPrice Float
+  semesterPrice  Float
+  users          User[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now()) @updatedAt
+  deletedAt      DateTime?
+
+  @@map("plan")
+}
+
 model User {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
   name            String
   email           String    @unique
   phone           String
   password        String
+  planKey         String
+  planDate        DateTime
+  plan            Plan      @relation(fields: [planKey], references: [key])
   services        Service[]
   ordersProvider  Order[]   @relation(name: "ordersProvider")
   ordersClient    Order[]   @relation(name: "ordersClient")
