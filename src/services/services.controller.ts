@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Query,
   Delete,
@@ -48,7 +48,7 @@ export class ServicesController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch(':id')
+  @Put(':id')
   async update(
     @UserRequest() user: UserJwt,
     @Param('id') id: string,
