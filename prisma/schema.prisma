@@ -26,26 +26,43 @@ model Plan {
 }
 
 model User {
-  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
+  id                    String       @id @default(auto()) @map("_id") @db.ObjectId
   name                  String
-  email                 String    @unique
+  email                 String       @unique
   phone                 String
   password              String
   planKey               String
   planDate              DateTime
-  forgotPasswordOtgCode String?   @unique
+  forgotPasswordOtgCode String?      @unique
   forgotPasswordExpires DateTime?
-  plan                  Plan      @relation(fields: [planKey], references: [key])
+  plan                  Plan         @relation(fields: [planKey], references: [key])
   services              Service[]
-  ordersProvider        Order[]   @relation(name: "ordersProvider")
-  ordersClient          Order[]   @relation(name: "ordersClient")
-  ongoingProvider       Ongoing[] @relation(name: "ongoingProvider")
-  ongoingClient         Ongoing[] @relation(name: "ongoingClient")
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @default(now()) @updatedAt
+  ordersProvider        Order[]      @relation(name: "ordersProvider")
+  ordersClient          Order[]      @relation(name: "ordersClient")
+  ongoingProvider       Ongoing[]    @relation(name: "ongoingProvider")
+  ongoingClient         Ongoing[]    @relation(name: "ongoingClient")
+  accusationsAccused    Accusation[] @relation(name: "accusationsAccused")
+  accusationsAccuser    Accusation[] @relation(name: "accusationsAccuser")
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @default(now()) @updatedAt
   deletedAt             DateTime?
 
   @@map("user")
+}
+
+model Accusation {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  accusedId   String    @unique @db.ObjectId
+  accuserId   String    @unique @db.ObjectId
+  accused     User      @relation(fields: [accusedId], references: [id], name: "accusationsAccused")
+  accuser     User      @relation(fields: [accuserId], references: [id], name: "accusationsAccuser")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+  deletedAt   DateTime?
+
+  @@map("accusation")
 }
 
 model Service {
