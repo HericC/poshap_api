@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
+import { MailModule } from 'src/mail/mail.module';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
@@ -14,7 +15,12 @@ const jwtOptions = {
 };
 
 @Module({
-  imports: [UsersModule, PassportModule, JwtModule.register(jwtOptions)],
+  imports: [
+    UsersModule,
+    MailModule,
+    PassportModule,
+    JwtModule.register(jwtOptions),
+  ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
 })

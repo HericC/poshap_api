@@ -65,13 +65,19 @@ export class UsersRepository {
     });
   }
 
+  async findOneByOtgCode(forgotPasswordOtgCode: string) {
+    return this.prisma.user.findUnique({
+      where: { forgotPasswordOtgCode },
+    });
+  }
+
   async update(id: string, uncheckedData: Prisma.UserUncheckedUpdateInput) {
-    const planKey = uncheckedData.planKey.toString();
+    const planKey = uncheckedData.planKey?.toString();
     delete uncheckedData.planKey;
 
     const data: Prisma.UserUpdateInput = {
       ...uncheckedData,
-      plan: { connect: { key: planKey } },
+      plan: planKey ? { connect: { key: planKey } } : undefined,
     };
 
     return this.prisma.user.update({

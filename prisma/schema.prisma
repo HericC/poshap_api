@@ -26,22 +26,24 @@ model Plan {
 }
 
 model User {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  name            String
-  email           String    @unique
-  phone           String
-  password        String
-  planKey         String
-  planDate        DateTime
-  plan            Plan      @relation(fields: [planKey], references: [key])
-  services        Service[]
-  ordersProvider  Order[]   @relation(name: "ordersProvider")
-  ordersClient    Order[]   @relation(name: "ordersClient")
-  ongoingProvider Ongoing[] @relation(name: "ongoingProvider")
-  ongoingClient   Ongoing[] @relation(name: "ongoingClient")
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @default(now()) @updatedAt
-  deletedAt       DateTime?
+  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String
+  email                 String    @unique
+  phone                 String
+  password              String
+  planKey               String
+  planDate              DateTime
+  forgotPasswordOtgCode String?   @unique
+  forgotPasswordExpires DateTime?
+  plan                  Plan      @relation(fields: [planKey], references: [key])
+  services              Service[]
+  ordersProvider        Order[]   @relation(name: "ordersProvider")
+  ordersClient          Order[]   @relation(name: "ordersClient")
+  ongoingProvider       Ongoing[] @relation(name: "ongoingProvider")
+  ongoingClient         Ongoing[] @relation(name: "ongoingClient")
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @default(now()) @updatedAt
+  deletedAt             DateTime?
 
   @@map("user")
 }
