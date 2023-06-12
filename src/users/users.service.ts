@@ -30,6 +30,10 @@ export class UsersService {
     });
   }
 
+  async findAllPlans() {
+    return this.plansRepository.findAll();
+  }
+
   async findOne(id: string) {
     const user = await this.usersRepository.findOne(id);
     if (!user) throw new NotFoundError('Usuário não encontrado.');

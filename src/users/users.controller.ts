@@ -30,6 +30,11 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Get('plans')
+  async findAllPlans() {
+    return this.usersService.findAllPlans();
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
