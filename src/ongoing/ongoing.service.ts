@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateOngoingDto } from './dto/create-ongoing.dto';
 import { FilterOngoingDto } from './dto/filter-ongoing.dto';
 import { OngoingRepository } from './repositories/ongoing.prisma.repository';
-import { NotFoundError } from '../common/errors/not-found.error';
 import { OrdersService } from '../orders/orders.service';
+import { NotFoundError } from '../common/errors/not-found.error';
 import { ForbiddenError } from '../common/errors/forbidden.error';
 
 @Injectable()

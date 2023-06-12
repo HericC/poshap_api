@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrdersRepository } from './repositories/orders.prisma.repository';
-import { NotFoundError } from '../common/errors/not-found.error';
 import { ServicesService } from '../services/services.service';
+import { NotFoundError } from '../common/errors/not-found.error';
 import { ForbiddenError } from '../common/errors/forbidden.error';
 
 @Injectable()

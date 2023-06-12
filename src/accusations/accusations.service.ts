@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAccusationDto } from './dto/create-accusation.dto';
-import { NotFoundError } from 'src/common/errors/not-found.error';
 import { AccusationsRepository } from './repositories/accusations.prisma.repository';
-import { ForbiddenError } from 'src/common/errors/forbidden.error';
+import { NotFoundError } from '../common/errors/not-found.error';
+import { ForbiddenError } from '../common/errors/forbidden.error';
 
 @Injectable()
 export class AccusationsService {
   constructor(private readonly accusationsRepository: AccusationsRepository) {}
 
-  create(createAccusationDto: CreateAccusationDto, userId: string) {
+  async create(createAccusationDto: CreateAccusationDto, userId: string) {
     if (createAccusationDto.accusedId === userId)
       throw new ForbiddenError('Não pode denunciar a se próprio.');
 

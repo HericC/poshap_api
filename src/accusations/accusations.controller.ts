@@ -16,7 +16,7 @@ export class AccusationsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(
+  async create(
     @UserRequest() user: UserJwt,
     @Body() createAccusationDto: CreateAccusationDto,
   ) {
