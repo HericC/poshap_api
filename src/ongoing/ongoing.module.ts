@@ -9,5 +9,6 @@ import { OrdersModule } from '../orders/orders.module';
   imports: [OrdersModule],
   controllers: [OngoingController],
   providers: [OngoingService, OngoingRepository, PrismaService],
+  exports: [OngoingRepository],
 })
 export class OngoingModule {}

@@ -9,6 +9,7 @@ const user = {
   phone: true,
   planKey: true,
   planDate: true,
+  blockDate: true,
 };
 
 const include: Prisma.OngoingInclude = {

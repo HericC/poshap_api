@@ -9,6 +9,7 @@ const user = {
   phone: true,
   planKey: true,
   planDate: true,
+  blockDate: true,
 };
 
 const include: Prisma.OrderInclude = {
@@ -51,6 +52,12 @@ export class OrdersRepository {
   async remove(id: string) {
     return this.prisma.order.delete({
       where: { id },
+    });
+  }
+
+  async removeAllByUser(userId: string) {
+    return this.prisma.order.deleteMany({
+      where: { OR: [{ providerId: userId }, { clientId: userId }] },
     });
   }
 }

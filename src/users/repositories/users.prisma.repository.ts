@@ -9,6 +9,7 @@ const select: Prisma.UserSelect = {
   phone: true,
   planKey: true,
   planDate: true,
+  blockDate: true,
   plan: {
     select: {
       key: true,

@@ -11,6 +11,7 @@ const include: Prisma.ServiceInclude = {
       phone: true,
       planKey: true,
       planDate: true,
+      blockDate: true,
     },
   },
 };
@@ -65,6 +66,12 @@ export class ServicesRepository {
   async remove(id: string) {
     return this.prisma.service.delete({
       where: { id },
+    });
+  }
+
+  async removeAllByUser(userId: string) {
+    return this.prisma.service.deleteMany({
+      where: { providerId: userId },
     });
   }
 }

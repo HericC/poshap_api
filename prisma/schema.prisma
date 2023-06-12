@@ -33,6 +33,7 @@ model User {
   password              String
   planKey               String
   planDate              DateTime
+  blockDate             DateTime?
   forgotPasswordOtgCode String?          @unique
   forgotPasswordExpires DateTime?
   plan                  Plan             @relation(fields: [planKey], references: [key])

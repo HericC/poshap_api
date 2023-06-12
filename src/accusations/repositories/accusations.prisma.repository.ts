@@ -9,6 +9,7 @@ const user = {
   phone: true,
   planKey: true,
   planDate: true,
+  blockDate: true,
 };
 
 const include: Prisma.AccusationInclude = {
@@ -46,5 +47,9 @@ export class AccusationsRepository {
       where: { id },
       include,
     });
+  }
+
+  async count(where: Prisma.AccusationWhereInput) {
+    return this.prisma.accusation.count({ where });
   }
 }

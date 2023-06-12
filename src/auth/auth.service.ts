@@ -99,7 +99,8 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<User> {
     const user = await this.usersRepository.findOneByEmail(email);
-    if (!user) return null;
+    const blockDate = user.blockDate && user.blockDate > new Date();
+    if (!user || blockDate) return null;
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) return null;
@@ -111,7 +112,8 @@ export class AuthService {
     const userJwt = { id: jwtPayload.sub, email: jwtPayload.email };
 
     const user = await this.usersRepository.findOne(userJwt.id);
-    if (!user || user.email !== userJwt.email) return null;
+    const blockDate = user.blockDate && user.blockDate > new Date();
+    if (!user || blockDate || user.email !== userJwt.email) return null;
 
     return userJwt;
   }
