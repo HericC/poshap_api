@@ -18,6 +18,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateStatusDto } from './dto/update-status.dto';
 
 @ApiBearerAuth()
 @ApiTags('users')
@@ -36,30 +37,38 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get()
+  async findOneJwt(@UserRequest() user: UserJwt) {
+    return this.usersService.findOne(user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put(':id')
+  @Put()
   async update(
     @UserRequest() user: UserJwt,
-    @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.usersService.update(id, updateUserDto, user.id);
+    return this.usersService.update(updateUserDto, user.id);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch('update-plan/:key')
-  async updatePlan(@UserRequest() user: UserJwt, @Param('key') key: string) {
-    return this.usersService.updatePlan(user.id, key);
+  @Patch('update-plan')
+  async updatePlan(
+    @UserRequest() user: UserJwt,
+    @Body() updateStatusDto: UpdateStatusDto,
+  ) {
+    return this.usersService.updatePlan(updateStatusDto, user.id);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete(':id')
-  async remove(@UserRequest() user: UserJwt, @Param('id') id: string) {
-    return this.usersService.remove(id, user.id);
+  @Delete()
+  async remove(@UserRequest() user: UserJwt) {
+    return this.usersService.remove(user.id);
   }
 }

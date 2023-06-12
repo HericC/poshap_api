@@ -71,8 +71,8 @@ model ProviderRating {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
   providerRating Int
   serviceRating  Int
-  providerNote   String
-  serviceNote    String
+  providerNote   String?
+  serviceNote    String?
   userId         String    @db.ObjectId
   user           User      @relation(fields: [userId], references: [id])
   createdAt      DateTime  @default(now())
@@ -85,7 +85,7 @@ model ProviderRating {
 model ClientRating {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   rating    Int
-  note      String
+  note      String?
   userId    String    @db.ObjectId
   user      User      @relation(fields: [userId], references: [id])
   createdAt DateTime  @default(now())

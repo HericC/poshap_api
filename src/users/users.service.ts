@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateStatusDto } from './dto/update-status.dto';
 import { UsersRepository } from './repositories/users.prisma.repository';
 import { PlansRepository } from './repositories/plans.prisma.repository';
 import { RatingsService } from '../ratings/ratings.service';
 import { NotFoundError } from '../common/errors/not-found.error';
-import { ForbiddenError } from '../common/errors/forbidden.error';
 import { DatabaseError } from '../common/errors/database.error';
 import * as bcrypt from 'bcrypt';
 
@@ -42,30 +42,27 @@ export class UsersService {
     return { ...user, ratings };
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto, userId: string) {
-    if (id !== userId) throw new ForbiddenError('Não possui permissão.');
-
+  async update(updateUserDto: UpdateUserDto, userId: string) {
     let hash: string;
     if (updateUserDto.password)
       hash = await bcrypt.hash(updateUserDto.password, 8);
 
-    return this.usersRepository.update(id, {
+    return this.usersRepository.update(userId, {
       ...updateUserDto,
       password: hash,
     });
   }
 
-  async updatePlan(id: string, key: string) {
+  async updatePlan({ key }: UpdateStatusDto, userId: string) {
     const plan = await this.plansRepository.findOne(key);
     if (!plan) throw new DatabaseError('Plano não encontrado.');
 
     // future implementation
 
-    return this.usersRepository.update(id, { planKey: key });
+    return this.usersRepository.update(userId, { planKey: key });
   }
 
-  async remove(id: string, userId: string) {
-    if (id !== userId) throw new ForbiddenError('Não possui permissão.');
-    return this.usersRepository.remove(id);
+  async remove(userId: string) {
+    return this.usersRepository.remove(userId);
   }
 }
