@@ -14,7 +14,7 @@ export class CreateServiceDto {
   @IsNotEmpty({ message: 'É necessário informar a categoria' })
   category: string;
 
-  @ApiProperty()
+  @ApiProperty({ minimum: 1 })
   @IsNumber({}, { message: 'O preço deve ser um número' })
   @IsNotEmpty({ message: 'É necessário informar o preço' })
   @Min(1, { message: 'Preço mínimo 1 real' })

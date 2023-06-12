@@ -42,6 +42,12 @@ export class ServicesController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('categories')
+  async findAllCategories() {
+    return this.servicesService.findAllCategories();
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.servicesService.findOne(id);

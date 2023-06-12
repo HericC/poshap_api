@@ -60,6 +60,11 @@ export class ServicesService {
     });
   }
 
+  async findAllCategories() {
+    const categories = await this.servicesRepository.findAllCategories();
+    return categories.map((category) => category.category);
+  }
+
   async findOne(id: string) {
     const service = await this.servicesRepository.findOne(id);
     if (!service) throw new NotFoundError('Serviço não encontrado.');

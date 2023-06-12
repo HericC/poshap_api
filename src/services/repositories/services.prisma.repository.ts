@@ -40,6 +40,12 @@ export class ServicesRepository {
     });
   }
 
+  async findAllCategories() {
+    return this.prisma.service.groupBy({
+      by: ['category'],
+    });
+  }
+
   async findOne(id: string) {
     return this.prisma.service.findUnique({
       where: { id },
