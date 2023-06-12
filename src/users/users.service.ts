@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './repositories/users.prisma.repository';
 import { PlansRepository } from './repositories/plans.prisma.repository';
+import { RatingsService } from '../ratings/ratings.service';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { ForbiddenError } from '../common/errors/forbidden.error';
 import { DatabaseError } from '../common/errors/database.error';
@@ -13,6 +14,7 @@ export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly plansRepository: PlansRepository,
+    private readonly ratingsService: RatingsService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -31,7 +33,9 @@ export class UsersService {
   async findOne(id: string) {
     const user = await this.usersRepository.findOne(id);
     if (!user) throw new NotFoundError('Usuário não encontrado.');
-    return user;
+
+    const ratings = await this.ratingsService.averageRatings(id);
+    return { ...user, ratings };
   }
 
   async update(id: string, updateUserDto: UpdateUserDto, userId: string) {

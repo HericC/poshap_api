@@ -2,27 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 
-const select = {
+const select: Prisma.UserSelect = {
   id: true,
   name: true,
   email: true,
   phone: true,
   planKey: true,
   planDate: true,
-  createdAt: true,
-  updatedAt: true,
-  deletedAt: true,
-};
-
-const include = {
-  plan: true,
-  services: {
+  plan: {
     select: {
-      id: true,
-      category: true,
-      price: true,
-      scheduling: true,
-      priority: true,
+      key: true,
+      name: true,
+      description: true,
     },
   },
 };
@@ -55,7 +46,7 @@ export class UsersRepository {
   async findOne(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
-      select: { ...select, ...include },
+      select,
     });
   }
 

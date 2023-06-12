@@ -12,6 +12,7 @@ import { ServicesModule } from './services/services.module';
 import { OrdersModule } from './orders/orders.module';
 import { OngoingModule } from './ongoing/ongoing.module';
 import { AccusationsModule } from './accusations/accusations.module';
+import { RatingsModule } from './ratings/ratings.module';
 
 const throttlerGuard = { provide: APP_GUARD, useClass: ThrottlerGuard };
 const ttl = +process.env.THROTTLER_TTL || 60;
@@ -29,6 +30,7 @@ const limit = +process.env.THROTTLER_LIMIT || 10;
     OrdersModule,
     OngoingModule,
     AccusationsModule,
+    RatingsModule,
   ],
   controllers: [AppController],
   providers: [AppService, throttlerGuard],

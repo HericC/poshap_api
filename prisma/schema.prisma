@@ -26,25 +26,27 @@ model Plan {
 }
 
 model User {
-  id                    String       @id @default(auto()) @map("_id") @db.ObjectId
+  id                    String           @id @default(auto()) @map("_id") @db.ObjectId
   name                  String
-  email                 String       @unique
+  email                 String           @unique
   phone                 String
   password              String
   planKey               String
   planDate              DateTime
-  forgotPasswordOtgCode String?      @unique
+  forgotPasswordOtgCode String?          @unique
   forgotPasswordExpires DateTime?
-  plan                  Plan         @relation(fields: [planKey], references: [key])
+  plan                  Plan             @relation(fields: [planKey], references: [key])
+  providerRatings       ProviderRating[]
+  clientRatings         ClientRating[]
   services              Service[]
-  ordersProvider        Order[]      @relation(name: "ordersProvider")
-  ordersClient          Order[]      @relation(name: "ordersClient")
-  ongoingProvider       Ongoing[]    @relation(name: "ongoingProvider")
-  ongoingClient         Ongoing[]    @relation(name: "ongoingClient")
-  accusationsAccused    Accusation[] @relation(name: "accusationsAccused")
-  accusationsAccuser    Accusation[] @relation(name: "accusationsAccuser")
-  createdAt             DateTime     @default(now())
-  updatedAt             DateTime     @default(now()) @updatedAt
+  ordersProvider        Order[]          @relation(name: "ordersProvider")
+  ordersClient          Order[]          @relation(name: "ordersClient")
+  ongoingProvider       Ongoing[]        @relation(name: "ongoingProvider")
+  ongoingClient         Ongoing[]        @relation(name: "ongoingClient")
+  accusationsAccused    Accusation[]     @relation(name: "accusationsAccused")
+  accusationsAccuser    Accusation[]     @relation(name: "accusationsAccuser")
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @default(now()) @updatedAt
   deletedAt             DateTime?
 
   @@map("user")
@@ -63,6 +65,34 @@ model Accusation {
   deletedAt   DateTime?
 
   @@map("accusation")
+}
+
+model ProviderRating {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  providerRating Int
+  serviceRating  Int
+  providerNote   String
+  serviceNote    String
+  userId         String    @db.ObjectId
+  user           User      @relation(fields: [userId], references: [id])
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now()) @updatedAt
+  deletedAt      DateTime?
+
+  @@map("providerrating")
+}
+
+model ClientRating {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  rating    Int
+  note      String
+  userId    String    @db.ObjectId
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  deletedAt DateTime?
+
+  @@map("clientrating")
 }
 
 model Service {
