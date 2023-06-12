@@ -43,6 +43,7 @@ model User {
   ordersClient          Order[]          @relation(name: "ordersClient")
   ongoingProvider       Ongoing[]        @relation(name: "ongoingProvider")
   ongoingClient         Ongoing[]        @relation(name: "ongoingClient")
+  ongoingCanceled       Ongoing[]        @relation(name: "ongoingCanceled")
   accusationsAccused    Accusation[]     @relation(name: "accusationsAccused")
   accusationsAccuser    Accusation[]     @relation(name: "accusationsAccuser")
   createdAt             DateTime         @default(now())
@@ -133,19 +134,21 @@ model Order {
 }
 
 model Ongoing {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  category     String
-  price        Float
-  description  String?
-  finishedDate DateTime?
-  canceledDate DateTime?
-  providerId   String    @db.ObjectId
-  clientId     String    @db.ObjectId
-  provider     User      @relation(fields: [providerId], references: [id], name: "ongoingProvider")
-  client       User      @relation(fields: [clientId], references: [id], name: "ongoingClient")
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @default(now()) @updatedAt
-  deletedAt    DateTime?
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  category       String
+  price          Float
+  description    String?
+  finishedDate   DateTime?
+  canceledDate   DateTime?
+  providerId     String    @db.ObjectId
+  clientId       String    @db.ObjectId
+  canceledUserId String?   @db.ObjectId
+  provider       User      @relation(fields: [providerId], references: [id], name: "ongoingProvider")
+  client         User      @relation(fields: [clientId], references: [id], name: "ongoingClient")
+  canceledUser   User?     @relation(fields: [providerId], references: [id], name: "ongoingCanceled")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now()) @updatedAt
+  deletedAt      DateTime?
 
   @@map("ongoing")
 }

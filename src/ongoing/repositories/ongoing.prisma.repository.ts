@@ -61,9 +61,20 @@ export class OngoingRepository {
 
   async update(
     id: string,
-    uncheckedData: { finishedDate?: Date; canceledDate?: Date },
+    uncheckedData: {
+      finishedDate?: Date;
+      canceledDate?: Date;
+      canceledUserId?: string;
+    },
   ) {
-    const data: Prisma.OngoingUpdateInput = { ...uncheckedData };
+    const canceledUserId = uncheckedData.canceledUserId;
+
+    const data: Prisma.OngoingUpdateInput = {
+      ...uncheckedData,
+      canceledUser: canceledUserId
+        ? { connect: { id: canceledUserId } }
+        : undefined,
+    };
 
     return this.prisma.ongoing.update({
       where: { id },

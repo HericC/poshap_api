@@ -52,6 +52,12 @@ export class OngoingController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('cancellationScore/:userid')
+  async cancellationScore(@Param('userid') userId: string) {
+    return this.ongoingService.cancellationScore(userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@UserRequest() user: UserJwt, @Param('id') id: string) {
     return this.ongoingService.findOne(id, user.id);

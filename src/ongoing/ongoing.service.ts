@@ -99,6 +99,32 @@ export class OngoingService {
     if (ongoing.canceledDate)
       throw new ForbiddenError('O serviço em andamento já foi cancelado.');
 
-    return this.ongoingRepository.update(id, { canceledDate: new Date() });
+    return this.ongoingRepository.update(id, {
+      canceledDate: new Date(),
+      canceledUserId: userId,
+    });
+  }
+
+  async cancellationScore(canceledUserId: string) {
+    const ongoingCanceled = await this.ongoingRepository.findAll({
+      canceledUserId: canceledUserId,
+      finishedDate: { isSet: false },
+      canceledDate: { isSet: true },
+    });
+
+    let score = 0;
+    for (const ongoing of ongoingCanceled) {
+      const { createdAt, canceledDate } = ongoing;
+
+      const seconds = canceledDate.getTime() - createdAt.getTime();
+      const minutes = seconds / 60000;
+
+      if (minutes > 120) score += 18;
+      else if (minutes > 60) score += 9;
+      else if (minutes > 30) score += 3;
+      else if (minutes > 10) score += 1;
+    }
+
+    return { score };
   }
 }
