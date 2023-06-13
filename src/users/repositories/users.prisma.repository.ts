@@ -2,13 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 
-const select: Prisma.UserSelect = {
+const selectPublic: Prisma.UserSelect = {
   id: true,
   name: true,
   email: true,
   phone: true,
-  planKey: true,
-  planDate: true,
   blockDate: true,
   plan: {
     select: {
@@ -17,6 +15,12 @@ const select: Prisma.UserSelect = {
       description: true,
     },
   },
+};
+
+const select = {
+  ...selectPublic,
+  planKey: true,
+  planDate: true,
 };
 
 @Injectable()
@@ -48,6 +52,13 @@ export class UsersRepository {
     return this.prisma.user.findUnique({
       where: { id },
       select,
+    });
+  }
+
+  async findOnePublic(id: string) {
+    return this.prisma.user.findUnique({
+      where: { id },
+      select: selectPublic,
     });
   }
 

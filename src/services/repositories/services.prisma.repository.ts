@@ -9,8 +9,6 @@ const include: Prisma.ServiceInclude = {
       name: true,
       email: true,
       phone: true,
-      planKey: true,
-      planDate: true,
       blockDate: true,
     },
   },

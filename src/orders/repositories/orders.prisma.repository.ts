@@ -7,8 +7,6 @@ const user = {
   name: true,
   email: true,
   phone: true,
-  planKey: true,
-  planDate: true,
   blockDate: true,
 };
 

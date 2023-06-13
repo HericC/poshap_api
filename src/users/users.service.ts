@@ -37,6 +37,12 @@ export class UsersService {
   async findOne(id: string) {
     const user = await this.usersRepository.findOne(id);
     if (!user) throw new NotFoundError('Usuário não encontrado.');
+    return user;
+  }
+
+  async findOnePublic(id: string) {
+    const user = await this.usersRepository.findOnePublic(id);
+    if (!user) throw new NotFoundError('Usuário não encontrado.');
 
     const ratings = await this.ratingsService.averageRatings(id);
     return { ...user, ratings };
