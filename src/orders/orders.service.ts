@@ -12,15 +12,13 @@ export class OrdersService {
     private readonly servicesService: ServicesService,
   ) {}
 
-  async create(createOrderDto: CreateOrderDto, userId: string) {
-    const service = await this.servicesService.findOne(
-      createOrderDto.serviceId,
-    );
+  async create({ serviceId, schedulingDate }: CreateOrderDto, userId: string) {
+    const service = await this.servicesService.findOne(serviceId);
 
     if (service.providerId === userId)
       throw new ForbiddenError('Não pode solicitar o seu proprio serviço.');
 
-    if (createOrderDto.schedulingDate && !service.scheduling)
+    if (schedulingDate && !service.scheduling)
       throw new ForbiddenError('Serviço não possui a opção de agendamento.');
 
     const orders = await this.ordersRepository.findAll({
@@ -37,9 +35,7 @@ export class OrdersService {
       category: service.category,
       price: service.price,
       description: service.description,
-      schedulingDate: service.scheduling
-        ? new Date(createOrderDto.schedulingDate)
-        : undefined,
+      schedulingDate: service.scheduling ? new Date(schedulingDate) : undefined,
       providerId: service.providerId,
       clientId: userId,
     });

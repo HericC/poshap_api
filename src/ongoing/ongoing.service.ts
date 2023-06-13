@@ -13,11 +13,8 @@ export class OngoingService {
     private readonly orderService: OrdersService,
   ) {}
 
-  async create(createOngoingDto: CreateOngoingDto, userId: string) {
-    const order = await this.orderService.findOne(
-      createOngoingDto.orderId,
-      userId,
-    );
+  async create({ orderId }: CreateOngoingDto, userId: string) {
+    const order = await this.orderService.findOne(orderId, userId);
 
     if (order.providerId !== userId)
       throw new ForbiddenError('Não possui permissão.');
@@ -29,7 +26,7 @@ export class OngoingService {
     if (ongoing.length)
       throw new ForbiddenError('Não pode ter mais de 1 serviço em andamento.');
 
-    await this.orderService.remove(createOngoingDto.orderId, userId);
+    await this.orderService.remove(orderId, userId);
 
     return this.ongoingRepository.create({
       category: order.category,
@@ -40,9 +37,7 @@ export class OngoingService {
     });
   }
 
-  async findAllProvider(filter: FilterOngoingDto, userId: string) {
-    const { status } = filter;
-
+  async findAllProvider({ status }: FilterOngoingDto, userId: string) {
     return this.ongoingRepository.findAll({
       providerId: userId,
       finishedDate: status ? { isSet: status === 'finished' } : undefined,
@@ -50,9 +45,7 @@ export class OngoingService {
     });
   }
 
-  async findAllClient(filter: FilterOngoingDto, userId: string) {
-    const { status } = filter;
-
+  async findAllClient({ status }: FilterOngoingDto, userId: string) {
     return this.ongoingRepository.findAll({
       clientId: userId,
       finishedDate: status ? { isSet: status === 'finished' } : undefined,
