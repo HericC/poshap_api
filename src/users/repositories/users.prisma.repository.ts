@@ -21,6 +21,7 @@ const select = {
   ...selectPublic,
   planKey: true,
   planDate: true,
+  wallet: true,
 };
 
 @Injectable()

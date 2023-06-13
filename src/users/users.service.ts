@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePlanDto } from './dto/update-plan.dto';
+import {
+  TypePayment as TypePaymentWallet,
+  UpdateWalletDto,
+} from './dto/update-wallet.dto';
 import { UsersRepository } from './repositories/users.prisma.repository';
 import { PlansRepository } from './repositories/plans.prisma.repository';
 import { RatingsService } from '../ratings/ratings.service';
@@ -66,6 +70,25 @@ export class UsersService {
     // future implementation
 
     return this.usersRepository.update(userId, { planKey: key });
+  }
+
+  async deposit(updateWalletDto: UpdateWalletDto, userId: string) {
+    const { value, typePayment } = updateWalletDto;
+
+    const type = TypePaymentWallet[typePayment];
+    if (!type) throw new NotFoundError('Tipo de pagamento não disponivel.');
+
+    if (type === 'bankSlip') {
+      /* future payment implementation */
+    }
+
+    if (type === 'pix') {
+      /* future payment implementation */
+    }
+
+    const user = await this.findOne(userId);
+    const wallet = user.wallet + value;
+    return this.usersRepository.update(userId, { wallet });
   }
 
   async remove(userId: string) {

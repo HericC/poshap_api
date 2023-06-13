@@ -19,6 +19,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePlanDto } from './dto/update-plan.dto';
+import { UpdateWalletDto } from './dto/update-wallet.dto';
 
 @ApiBearerAuth()
 @ApiTags('users')
@@ -64,6 +65,15 @@ export class UsersController {
     @Body() UpdatePlanDto: UpdatePlanDto,
   ) {
     return this.usersService.updatePlan(UpdatePlanDto, user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('deposit')
+  async deposit(
+    @UserRequest() user: UserJwt,
+    @Body() updateWalletDto: UpdateWalletDto,
+  ) {
+    return this.usersService.deposit(updateWalletDto, user.id);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -31,6 +31,7 @@ model User {
   email                 String           @unique
   phone                 String
   password              String
+  wallet                Float            @default(0)
   planKey               String
   planDate              DateTime
   blockDate             DateTime?
