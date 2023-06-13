@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UpdateStatusDto } from './dto/update-status.dto';
+import { UpdatePlanDto } from './dto/update-plan.dto';
 import { UsersRepository } from './repositories/users.prisma.repository';
 import { PlansRepository } from './repositories/plans.prisma.repository';
 import { RatingsService } from '../ratings/ratings.service';
@@ -59,7 +59,7 @@ export class UsersService {
     });
   }
 
-  async updatePlan({ key }: UpdateStatusDto, userId: string) {
+  async updatePlan({ key }: UpdatePlanDto, userId: string) {
     const plan = await this.plansRepository.findOne(key);
     if (!plan) throw new DatabaseError('Plano não encontrado.');
 

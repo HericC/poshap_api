@@ -18,8 +18,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UpdateStatusDto } from './dto/update-status.dto';
-import { UpdateWalletDto } from './dto/update-wallet.dto';
+import { UpdatePlanDto } from './dto/update-plan.dto';
 
 @ApiBearerAuth()
 @ApiTags('users')
@@ -62,9 +61,9 @@ export class UsersController {
   @Patch('update-plan')
   async updatePlan(
     @UserRequest() user: UserJwt,
-    @Body() updateStatusDto: UpdateStatusDto,
+    @Body() UpdatePlanDto: UpdatePlanDto,
   ) {
-    return this.usersService.updatePlan(updateStatusDto, user.id);
+    return this.usersService.updatePlan(UpdatePlanDto, user.id);
   }
 
   @UseGuards(JwtAuthGuard)
