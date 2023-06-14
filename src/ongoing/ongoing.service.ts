@@ -23,7 +23,7 @@ export class OngoingService {
       order.providerId,
     );
 
-    if (ongoing.length)
+    if (ongoing)
       throw new ForbiddenError('Não pode ter mais de 1 serviço em andamento.');
 
     await this.orderService.remove(orderId, userId);

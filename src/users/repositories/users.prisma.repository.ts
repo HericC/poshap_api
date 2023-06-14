@@ -43,8 +43,9 @@ export class UsersRepository {
     });
   }
 
-  async findAll() {
+  async findAll(where: Prisma.UserWhereInput) {
     return this.prisma.user.findMany({
+      where,
       select,
     });
   }
@@ -70,7 +71,7 @@ export class UsersRepository {
   }
 
   async findOneByOtgCode(forgotPasswordOtgCode: string) {
-    return this.prisma.user.findUnique({
+    return this.prisma.user.findFirst({
       where: { forgotPasswordOtgCode },
     });
   }

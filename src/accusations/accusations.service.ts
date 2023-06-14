@@ -27,8 +27,8 @@ export class AccusationsService {
     await this.ordersRepository.removeAllByUser(userId);
 
     const ongoing = await this.ongoingRepository.findOneByProvider(userId);
-    if (ongoing.length)
-      await this.ongoingRepository.update(ongoing[0].id, {
+    if (ongoing)
+      await this.ongoingRepository.update(ongoing.id, {
         canceledDate: new Date(),
       });
   }

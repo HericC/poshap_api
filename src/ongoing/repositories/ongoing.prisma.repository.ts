@@ -48,7 +48,7 @@ export class OngoingRepository {
   }
 
   async findOneByProvider(providerId: string) {
-    return this.prisma.ongoing.findMany({
+    return this.prisma.ongoing.findFirst({
       where: {
         providerId,
         finishedDate: { isSet: false },

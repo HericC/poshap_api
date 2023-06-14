@@ -38,12 +38,12 @@ export class AuthService {
         else break;
       }
 
-      const currentDate = new Date();
-      currentDate.setHours(currentDate.getHours() + 4);
+      const forgotPasswordExpires = new Date();
+      forgotPasswordExpires.setHours(forgotPasswordExpires.getHours() + 4);
 
       await this.usersRepository.update(user.id, {
         forgotPasswordOtgCode: otgCode,
-        forgotPasswordExpires: currentDate,
+        forgotPasswordExpires,
       });
 
       this.mailService.sendMail({
