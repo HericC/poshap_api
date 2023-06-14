@@ -22,12 +22,15 @@ export class ServicesService {
         'Plano incompatível com a opção de agendamento.',
       );
 
-    const priority = user.planKey !== 'basic';
-    // if (!priority && createServiceDto.priority) future implementation
+    let priority = user.planKey !== 'basic';
+    if (!priority && createServiceDto.priority) {
+      await this.usersService.debit(1, user.id);
+      priority = true;
+    }
 
     return this.servicesRepository.create({
       ...createServiceDto,
-      providerId: userId,
+      providerId: user.id,
       priority,
     });
   }

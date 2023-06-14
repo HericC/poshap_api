@@ -70,7 +70,7 @@ export class UsersService {
 
   private async updatePlanWallet(plan: Plan, typePlan: TypePlan, user: User) {
     const price = plan[`${typePlan}Price`];
-    if (!price) throw new DatabaseError('Tipo do plano não encontrado.');
+    if (!price) throw new NotFoundError('Tipo do plano não encontrado.');
 
     const wallet = user.wallet - price;
     if (wallet < 0) throw new DatabaseError('Não possui saldo suficiente.');
@@ -89,7 +89,7 @@ export class UsersService {
     if (!type) throw new NotFoundError('Tipo de pagamento não disponivel.');
 
     const plan = await this.plansRepository.findOne(key);
-    if (!plan) throw new DatabaseError('Plano não encontrado.');
+    if (!plan) throw new NotFoundError('Plano não encontrado.');
 
     const user = await this.findOne(userId);
     if (plan.key === user.planKey)
@@ -129,6 +129,13 @@ export class UsersService {
 
     const user = await this.findOne(userId);
     const wallet = user.wallet + value;
+    return this.usersRepository.update(userId, { wallet });
+  }
+
+  async debit(value: number, userId: string) {
+    const user = await this.findOne(userId);
+    const wallet = user.wallet - value;
+    if (wallet < 0) throw new DatabaseError('Não possui saldo suficiente.');
     return this.usersRepository.update(userId, { wallet });
   }
 
