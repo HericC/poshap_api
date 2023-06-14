@@ -35,7 +35,7 @@ model User {
   planKey               String
   planDate              DateTime
   blockDate             DateTime?
-  forgotPasswordOtgCode String?          @unique
+  forgotPasswordOtgCode String?
   forgotPasswordExpires DateTime?
   plan                  Plan             @relation(fields: [planKey], references: [key])
   providerRatings       ProviderRating[]

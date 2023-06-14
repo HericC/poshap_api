@@ -18,6 +18,12 @@ import { NotFoundError } from '../common/errors/not-found.error';
 import { DatabaseError } from '../common/errors/database.error';
 import * as bcrypt from 'bcrypt';
 
+enum PlanTime {
+  monthly = 1,
+  quarterly = 3,
+  semester = 6,
+}
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -75,9 +81,12 @@ export class UsersService {
     const wallet = user.wallet - price;
     if (wallet < 0) throw new DatabaseError('Não possui saldo suficiente.');
 
+    const planDate = new Date();
+    planDate.setMonth(planDate.getMonth() + PlanTime[typePlan]);
+
     return this.usersRepository.update(user.id, {
       planKey: plan.key,
-      planDate: new Date(),
+      planDate,
       wallet,
     });
   }
