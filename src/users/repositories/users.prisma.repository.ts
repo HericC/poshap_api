@@ -92,6 +92,16 @@ export class UsersRepository {
     });
   }
 
+  async updateMany(
+    ids: string[],
+    uncheckedData: Prisma.UserUncheckedUpdateManyInput,
+  ) {
+    return this.prisma.user.updateMany({
+      where: { id: { in: ids } },
+      data: uncheckedData,
+    });
+  }
+
   async remove(id: string) {
     return this.prisma.user.delete({
       where: { id },

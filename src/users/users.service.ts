@@ -1,3 +1,4 @@
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { Injectable } from '@nestjs/common';
 import { Plan, User } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -150,5 +151,16 @@ export class UsersService {
 
   async remove(userId: string) {
     return this.usersRepository.remove(userId);
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_3AM)
+  async checkPlanExpirationTime() {
+    const users = await this.usersRepository.findAll({
+      planKey: { not: 'basic' },
+      planDate: { lt: new Date() },
+    });
+
+    const usersIds = users.map((user) => user.id);
+    return this.usersRepository.updateMany(usersIds, { planKey: 'basic' });
   }
 }
