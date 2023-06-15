@@ -17,11 +17,13 @@ const selectPublic: Prisma.UserSelect = {
   },
 };
 
-const select = {
+const select: Prisma.UserSelect = {
   ...selectPublic,
+  cpf: true,
   planKey: true,
   planDate: true,
   wallet: true,
+  paymentClientId: true,
 };
 
 @Injectable()

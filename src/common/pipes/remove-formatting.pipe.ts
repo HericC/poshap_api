@@ -1,8 +1,5 @@
 import { Injectable, PipeTransform, ArgumentMetadata } from '@nestjs/common';
-import {
-  removeMoneyFormatting,
-  removePhoneFormatting,
-} from '../utils/format.util';
+import { removeMoneyFormatting, formatOnlyNumbers } from '../utils/format.util';
 
 @Injectable()
 export class RemoveFormattingPipe implements PipeTransform {
@@ -14,9 +11,14 @@ export class RemoveFormattingPipe implements PipeTransform {
     return typeof value === 'object' && value !== null;
   }
 
+  private cpfFormatting(value: any) {
+    if (value.cpf && typeof value.cpf === 'string')
+      value.cpf = formatOnlyNumbers(value.cpf);
+  }
+
   private phoneFormatting(value: any) {
     if (value.phone && typeof value.phone === 'string')
-      value.phone = removePhoneFormatting(value.phone);
+      value.phone = formatOnlyNumbers(value.phone);
   }
 
   private priceFormatting(value: any) {
@@ -29,6 +31,7 @@ export class RemoveFormattingPipe implements PipeTransform {
 
     const newValue = { ...value };
 
+    this.cpfFormatting(newValue);
     this.phoneFormatting(newValue);
     this.priceFormatting(newValue);
 

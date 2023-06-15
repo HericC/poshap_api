@@ -10,7 +10,6 @@ export enum TypePlan {
 export enum TypePayment {
   wallet = 'wallet',
   bankSlip = 'bankSlip',
-  pix = 'pix',
 }
 
 export class UpdatePlanDto {

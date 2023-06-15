@@ -28,6 +28,7 @@ model Plan {
 model User {
   id                    String           @id @default(auto()) @map("_id") @db.ObjectId
   name                  String
+  cpf                   String           @unique
   email                 String           @unique
   phone                 String
   password              String
@@ -37,7 +38,9 @@ model User {
   blockDate             DateTime?
   forgotPasswordOtgCode String?
   forgotPasswordExpires DateTime?
+  paymentClientId       String?
   plan                  Plan             @relation(fields: [planKey], references: [key])
+  Payments              Payment[]
   providerRatings       ProviderRating[]
   clientRatings         ClientRating[]
   services              Service[]
@@ -53,6 +56,25 @@ model User {
   deletedAt             DateTime?
 
   @@map("user")
+}
+
+model Payment {
+  id        String    @id @map("_id")
+  value     Float
+  status    String
+  action    String
+  type      String
+  url       String
+  dueDate   DateTime
+  planKey   String?
+  planTime  Int?
+  userId    String    @db.ObjectId
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  deletedAt DateTime?
+
+  @@map("payment")
 }
 
 model Accusation {

@@ -5,13 +5,20 @@ import {
   IsEmail,
   IsPhoneNumber,
   MinLength,
+  Validate,
 } from 'class-validator';
+import { IsCpf } from '../../common/validations/is-cpf.validation';
 
 export class CreateUserDto {
   @ApiProperty()
   @IsString({ message: 'O nome deve ser um texto' })
   @IsNotEmpty({ message: 'É necessário informar o nome.' })
   name: string;
+
+  @ApiProperty()
+  @Validate(IsCpf, { message: 'É necessário informar um CPF válido' })
+  @IsNotEmpty({ message: 'É necessário informar o cpf.' })
+  cpf: string;
 
   @ApiProperty()
   @IsEmail({}, { message: 'É necessário informar um e-mail válido' })

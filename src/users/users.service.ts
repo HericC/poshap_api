@@ -1,11 +1,11 @@
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Injectable } from '@nestjs/common';
-import { Plan, User } from '@prisma/client';
+import { HttpService } from '@nestjs/axios';
+import { Payment, User } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {
   TypePayment as TypePaymentPlan,
-  TypePlan,
   UpdatePlanDto,
 } from './dto/update-plan.dto';
 import {
@@ -14,9 +14,12 @@ import {
 } from './dto/update-wallet.dto';
 import { UsersRepository } from './repositories/users.prisma.repository';
 import { PlansRepository } from './repositories/plans.prisma.repository';
+import { PaymentsRepository } from './repositories/payments.prisma.repository';
 import { RatingsService } from '../ratings/ratings.service';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { DatabaseError } from '../common/errors/database.error';
+import { catchError, firstValueFrom } from 'rxjs';
+import { AxiosError } from 'axios';
 import * as bcrypt from 'bcrypt';
 
 enum PlanTime {
@@ -28,8 +31,10 @@ enum PlanTime {
 @Injectable()
 export class UsersService {
   constructor(
+    private readonly httpService: HttpService,
     private readonly usersRepository: UsersRepository,
     private readonly plansRepository: PlansRepository,
+    private readonly paymentsRepository: PaymentsRepository,
     private readonly ratingsService: RatingsService,
   ) {}
 
@@ -48,6 +53,10 @@ export class UsersService {
 
   async findAllPlans() {
     return this.plansRepository.findAll();
+  }
+
+  async findAllPayments(userId: string) {
+    return this.paymentsRepository.findAll({ userId });
   }
 
   async findOne(id: string) {
@@ -75,21 +84,82 @@ export class UsersService {
     });
   }
 
-  private async updatePlanWallet(plan: Plan, typePlan: TypePlan, user: User) {
-    const price = plan[`${typePlan}Price`];
-    if (!price) throw new NotFoundError('Tipo do plano não encontrado.');
+  private async paymentClient(user: User) {
+    const payload = {
+      name: user.name,
+      cpfCnpj: user.cpf,
+      email: user.email,
+      phone: user.phone,
+      externalReference: user.id,
+    };
 
+    const { data } = await firstValueFrom(
+      this.httpService.post('customers', payload).pipe(
+        catchError((error: AxiosError) => {
+          console.error(error.response.data);
+          throw new DatabaseError('Não foi possivel processar o pagamento.');
+        }),
+      ),
+    );
+
+    return this.usersRepository.update(user.id, { paymentClientId: data.id });
+  }
+
+  private async payment(
+    action: string,
+    value: number,
+    user: User,
+    planKey?: string,
+    time?: PlanTime,
+  ) {
+    if (!user.paymentClientId) user = (await this.paymentClient(user)) as User;
+
+    const dueDate = new Date();
+    dueDate.setMonth(dueDate.getDate() + 3);
+
+    const payload = {
+      customer: user.paymentClientId,
+      billingType: 'BOLETO',
+      value,
+      dueDate,
+    };
+
+    const { data } = await firstValueFrom(
+      this.httpService.post('customers', payload).pipe(
+        catchError((error: AxiosError) => {
+          console.error(error.response.data);
+          throw new DatabaseError('Não foi possivel processar o pagamento.');
+        }),
+      ),
+    );
+
+    return this.paymentsRepository.create({
+      id: data.id,
+      value: data.value,
+      status: 'PAYMENT_WAITING',
+      action,
+      type: 'bankSlip',
+      url: data.bankSlipUrl,
+      dueDate: data.dueDate,
+      planKey,
+      planTime: time,
+      userId: user.id,
+    });
+  }
+
+  private async updatePlanWallet(
+    planKey: string,
+    price: number,
+    time: PlanTime,
+    user: User,
+  ) {
     const wallet = user.wallet - price;
     if (wallet < 0) throw new DatabaseError('Não possui saldo suficiente.');
 
     const planDate = new Date();
-    planDate.setMonth(planDate.getMonth() + PlanTime[typePlan]);
+    planDate.setMonth(planDate.getMonth() + time);
 
-    return this.usersRepository.update(user.id, {
-      planKey: plan.key,
-      planDate,
-      wallet,
-    });
+    return this.usersRepository.update(user.id, { planKey, planDate, wallet });
   }
 
   async updatePlan(updatePlanDto: UpdatePlanDto, userId: string) {
@@ -111,15 +181,16 @@ export class UsersService {
     )
       throw new DatabaseError('Plano inferior ao plano atual.');
 
+    const price = plan[`${typePlan}Price`];
+    if (!price) throw new NotFoundError('Tipo do plano não encontrado.');
+
+    const time = PlanTime[typePlan];
+
     if (type === 'wallet')
-      return this.updatePlanWallet(plan, typePlan, user as any);
+      return this.updatePlanWallet(plan.key, price, time, user as any);
 
     if (type === 'bankSlip') {
-      /* future payment implementation */
-    }
-
-    if (type === 'pix') {
-      /* future payment implementation */
+      return this.payment('update-plan', price, user as any, plan.key, time);
     }
   }
 
@@ -129,17 +200,11 @@ export class UsersService {
     const type = TypePaymentWallet[typePayment];
     if (!type) throw new NotFoundError('Tipo de pagamento não disponivel.');
 
-    if (type === 'bankSlip') {
-      /* future payment implementation */
-    }
-
-    if (type === 'pix') {
-      /* future payment implementation */
-    }
-
     const user = await this.findOne(userId);
-    const wallet = user.wallet + value;
-    return this.usersRepository.update(userId, { wallet });
+
+    if (type === 'bankSlip') {
+      return this.payment('deposit', value, user as any);
+    }
   }
 
   async debit(value: number, userId: string) {
@@ -153,8 +218,44 @@ export class UsersService {
     return this.usersRepository.remove(userId);
   }
 
+  private async webhookUpdatePlan(payment: Payment, user: User) {
+    const planDate = new Date();
+    planDate.setMonth(planDate.getMonth() + payment.planTime);
+
+    return this.usersRepository.update(user.id, {
+      planKey: payment.planKey,
+      planDate,
+    });
+  }
+
+  private async webhookDeposit(payment: Payment, user: User) {
+    const wallet = user.wallet + payment.value;
+    return this.usersRepository.update(user.id, { wallet });
+  }
+
+  async webhookPayment(webhook: any) {
+    const events = ['PAYMENT_RECEIVED', 'PAYMENT_OVERDUE', 'PAYMENT_DELETED'];
+    if (!events.includes(webhook.event))
+      return { message: 'event not allowed' };
+
+    const payment = await this.paymentsRepository.update(webhook.payment.id, {
+      status: webhook.event,
+    });
+
+    if (payment.status === 'PAYMENT_RECEIVED') {
+      if (payment.action === 'update-plan')
+        this.webhookUpdatePlan(payment, payment.user);
+      else if (payment.action === 'deposit')
+        this.webhookDeposit(payment, payment.user);
+    }
+
+    return { message: 'success!!!' };
+  }
+
   @Cron(CronExpression.EVERY_DAY_AT_3AM)
   async checkPlanExpirationTime() {
+    console.info('Verificando usuários com planos expirados!');
+
     const users = await this.usersRepository.findAll({
       planKey: { not: 'basic' },
       planDate: { lt: new Date() },

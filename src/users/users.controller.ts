@@ -8,6 +8,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpCode,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
@@ -38,6 +39,12 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('payments')
+  async findAllPayments(@UserRequest() user: UserJwt) {
+    return this.usersService.findAllPayments(user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get()
   async findOneJwt(@UserRequest() user: UserJwt) {
     return this.usersService.findOne(user.id);
@@ -62,9 +69,9 @@ export class UsersController {
   @Patch('update-plan')
   async updatePlan(
     @UserRequest() user: UserJwt,
-    @Body() UpdatePlanDto: UpdatePlanDto,
+    @Body() updatePlanDto: UpdatePlanDto,
   ) {
-    return this.usersService.updatePlan(UpdatePlanDto, user.id);
+    return this.usersService.updatePlan(updatePlanDto, user.id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -80,5 +87,11 @@ export class UsersController {
   @Delete()
   async remove(@UserRequest() user: UserJwt) {
     return this.usersService.remove(user.id);
+  }
+
+  @HttpCode(200)
+  @Post('webhook-payment')
+  async webhookPayment(@Body() webhook: any) {
+    return this.usersService.webhookPayment(webhook);
   }
 }

@@ -1,6 +1,6 @@
 export type currencyTypes = 'BRL' | 'USD' | 'EUR';
 
-export const removePhoneFormatting = (phone: string) => {
+export const formatOnlyNumbers = (phone: string) => {
   return phone.replace(/\D/g, '');
 };
 

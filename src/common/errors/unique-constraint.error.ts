@@ -2,6 +2,7 @@ import { ConflictError } from './conflict.error';
 import { PrismaClientError } from './prisma-client.error';
 
 enum AttributeTraductionBR {
+  cpf = 'CPF',
   email = 'E-mail',
   accusedId = 'id',
 }
