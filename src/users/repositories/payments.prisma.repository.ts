@@ -21,7 +21,7 @@ export class PaymentsRepository {
   }
 
   async findAll(where: Prisma.PaymentWhereInput) {
-    return this.prisma.accusation.findMany({ where });
+    return this.prisma.payment.findMany({ where });
   }
 
   async findOne(id: string) {
