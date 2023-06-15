@@ -122,10 +122,11 @@ export class UsersService {
       billingType: 'BOLETO',
       value,
       dueDate,
+      postalService: false,
     };
 
     const { data } = await firstValueFrom(
-      this.httpService.post('customers', payload).pipe(
+      this.httpService.post('payments', payload).pipe(
         catchError((error: AxiosError) => {
           console.error(error.response.data);
           throw new DatabaseError('Não foi possivel processar o pagamento.');
