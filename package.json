@@ -37,11 +37,10 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed": "nest start --config ./nest-cli.seed.json",
     "compodoc": "npx @compodoc/compodoc -p tsconfig.json -s",
-    "prepare": "husky install",
     "up": "npx prisma db push",
     "gen": "npx prisma generate && npm run up",
     "studio": "npx prisma studio",
-    "init": "npm install && npm run prepare && npm run gen",
+    "init": "npm install && husky install && npm run gen",
     "commit": "cz"
   },
   "dependencies": {

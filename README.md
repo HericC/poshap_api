@@ -16,10 +16,13 @@ Abra o terminal e execute: "npm run start".
 $ npm install
 
 # install commit standardization
-$ npm run prepare
+$ husky install
 
 # complete installation
 $ npm run init
+
+# production build
+$ npm run build
 ```
 
 ## Running the app
