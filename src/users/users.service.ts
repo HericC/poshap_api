@@ -115,7 +115,7 @@ export class UsersService {
     if (!user.paymentClientId) user = (await this.paymentClient(user)) as User;
 
     const dueDate = new Date();
-    dueDate.setMonth(dueDate.getDate() + 3);
+    dueDate.setDate(dueDate.getDate() + 3);
 
     const payload = {
       customer: user.paymentClientId,
@@ -141,7 +141,7 @@ export class UsersService {
       action,
       type: 'bankSlip',
       url: data.bankSlipUrl,
-      dueDate: data.dueDate,
+      dueDate: new Date(data.dueDate),
       planKey,
       planTime: time,
       userId: user.id,
