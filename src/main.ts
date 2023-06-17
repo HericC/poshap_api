@@ -24,16 +24,18 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
-  const APP_NAME = configService.get('APP_NAME');
-  const APP_VERSION = configService.get('APP_VERSION');
-  const APP_DOCS_PATH = configService.get('APP_DOCS_PATH') || 'doc';
-  const APP_URL = configService.get('APP_URL');
+  const APP_NAME = configService.get('APP_NAME') || 'Poshap';
+  const APP_VERSION = configService.get('APP_VERSION') || '1.0.0';
   const APP_PORT = configService.get('APP_PORT') || 3000;
+  const APP_URL =
+    configService.get('APP_URL') || `http://localhost:${APP_PORT}`;
+  const APP_DOCS_PATH = configService.get('APP_DOCS_PATH') || 'doc';
+  const APP_CORS_PATH = configService.get('APP_CORS_PATH') || '*';
 
   // Security
   app.use(helmet());
   app.enableCors({
-    origin: APP_NAME || '*',
+    origin: APP_CORS_PATH,
   });
 
   // Filters
@@ -82,9 +84,8 @@ async function bootstrap() {
 
   // Start server
   await app.listen(APP_PORT, () => {
-    const url = APP_URL || `http://localhost:${APP_PORT}`;
-    console.log(`Running API: ${url}`);
-    console.log(`Running DOC: ${url}/${APP_DOCS_PATH}`);
+    console.log(`Running API: ${APP_URL}`);
+    console.log(`Running DOC: ${APP_URL}/${APP_DOCS_PATH}`);
   });
 }
 
