@@ -31,11 +31,11 @@ export class PaymentsRepository {
     });
   }
 
-  async findOneWaitingByUser(userId: string) {
+  async findOnePendingByUser(userId: string) {
     return this.prisma.payment.findFirst({
       where: {
         userId: userId,
-        status: 'PAYMENT_WAITING',
+        status: { in: ['WAITING', 'PENDING'] },
       },
     });
   }

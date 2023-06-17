@@ -130,7 +130,7 @@ export class UsersService {
     planKey?: string,
     time?: PlanTime,
   ) {
-    const payment = await this.paymentsRepository.findOneWaitingByUser(user.id);
+    const payment = await this.paymentsRepository.findOnePendingByUser(user.id);
     if (payment)
       throw new ForbiddenError('Não pode ter mais de 1 pagamento em espera.');
 
@@ -159,7 +159,7 @@ export class UsersService {
     return this.paymentsRepository.create({
       id: data.id,
       value: data.value,
-      status: 'PAYMENT_WAITING',
+      status: 'WAITING',
       action,
       type: 'bankSlip',
       url: data.bankSlipUrl,
@@ -257,12 +257,19 @@ export class UsersService {
   }
 
   async webhookPayment(webhook: any) {
-    const events = ['PAYMENT_RECEIVED', 'PAYMENT_OVERDUE', 'PAYMENT_DELETED'];
+    const events = [
+      'PAYMENT_CREATED',
+      'PAYMENT_CONFIRMED',
+      'PAYMENT_RECEIVED',
+      'PAYMENT_OVERDUE',
+      'PAYMENT_DELETED',
+    ];
+
     if (!events.includes(webhook.event))
       return { message: 'event not allowed' };
 
     const payment = await this.paymentsRepository.update(webhook.payment.id, {
-      status: webhook.event,
+      status: webhook.payment.status,
     });
 
     if (payment.status === 'PAYMENT_RECEIVED') {
