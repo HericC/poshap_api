@@ -18,6 +18,7 @@ import { PaymentsRepository } from './repositories/payments.prisma.repository';
 import { RatingsService } from '../ratings/ratings.service';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { DatabaseError } from '../common/errors/database.error';
+import { ForbiddenError } from '../common/errors/forbidden.error';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import * as bcrypt from 'bcrypt';
@@ -113,6 +114,10 @@ export class UsersService {
     planKey?: string,
     time?: PlanTime,
   ) {
+    const payment = await this.paymentsRepository.findOneWaitingByUser(user.id);
+    if (payment)
+      throw new ForbiddenError('Não pode ter mais de 1 pagamento em espera.');
+
     if (!user.paymentClientId) user = (await this.paymentClient(user)) as User;
 
     const dueDate = new Date();

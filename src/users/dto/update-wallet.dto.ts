@@ -6,10 +6,10 @@ export enum TypePayment {
 }
 
 export class UpdateWalletDto {
-  @ApiProperty({ minimum: 1 })
+  @ApiProperty({ minimum: 5 })
   @IsNumber({}, { message: 'O valor deve ser um número' })
   @IsNotEmpty({ message: 'É necessário informar o valor' })
-  @Min(1, { message: 'Valor mínimo 1 real' })
+  @Min(5, { message: 'Valor mínimo 5 reais' })
   value: number;
 
   @ApiProperty({

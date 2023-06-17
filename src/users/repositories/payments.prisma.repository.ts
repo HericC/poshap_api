@@ -31,6 +31,15 @@ export class PaymentsRepository {
     });
   }
 
+  async findOneWaitingByUser(userId: string) {
+    return this.prisma.payment.findFirst({
+      where: {
+        userId: userId,
+        status: 'PAYMENT_WAITING',
+      },
+    });
+  }
+
   async update(id: string, uncheckedData: Prisma.PaymentUncheckedUpdateInput) {
     const data: Prisma.PaymentUpdateInput = { ...uncheckedData };
 
