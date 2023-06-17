@@ -45,6 +45,12 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('payments/bar-code/:id')
+  async findPaymentBarCode(@Param('id') id: string) {
+    return this.usersService.findPaymentBarCode(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get()
   async findOneJwt(@UserRequest() user: UserJwt) {
     return this.usersService.findOne(user.id);

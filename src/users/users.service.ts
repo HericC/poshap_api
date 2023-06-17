@@ -60,6 +60,22 @@ export class UsersService {
     return this.paymentsRepository.findAll({ userId });
   }
 
+  async findPaymentBarCode(id: string) {
+    const payment = await this.paymentsRepository.findOne(id);
+    if (!payment) throw new NotFoundError('Pagamento não encontrado.');
+
+    const { data } = await firstValueFrom(
+      this.httpService.post(`payments/${id}/identificationField`).pipe(
+        catchError((error: AxiosError) => {
+          console.error(error.response.data);
+          throw new DatabaseError('Não foi possivel processar a requisição.');
+        }),
+      ),
+    );
+
+    return { barCode: data.identificationField };
+  }
+
   async findOne(id: string) {
     const user = await this.usersRepository.findOne(id);
     if (!user) throw new NotFoundError('Usuário não encontrado.');
