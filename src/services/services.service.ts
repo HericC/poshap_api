@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { FilterServiceDto } from './dto/filter-service.dto';
@@ -14,19 +15,34 @@ export class ServicesService {
     private readonly usersService: UsersService,
   ) {}
 
-  async create(createServiceDto: CreateServiceDto, userId: string) {
-    const user = await this.usersService.findOne(userId);
-
-    if (createServiceDto.scheduling && user.planKey !== 'gold')
+  private async validateCreateAndUpdate(
+    serviceDto: CreateServiceDto | UpdateServiceDto,
+    user: User,
+    updatePriority = false,
+  ) {
+    if (serviceDto.scheduling && user.planKey !== 'gold')
       throw new ForbiddenError(
         'Plano incompatível com a opção de agendamento.',
       );
 
+    if (updatePriority) return updatePriority;
+
     let priority = user.planKey !== 'basic';
-    if (!priority && createServiceDto.priority) {
+    if (!priority && serviceDto.priority) {
       await this.usersService.debit(1, user.id);
       priority = true;
     }
+
+    return priority;
+  }
+
+  async create(createServiceDto: CreateServiceDto, userId: string) {
+    const user = await this.usersService.findOne(userId);
+
+    const priority = await this.validateCreateAndUpdate(
+      createServiceDto,
+      user as User,
+    );
 
     return this.servicesRepository.create({
       ...createServiceDto,
@@ -80,7 +96,18 @@ export class ServicesService {
     if (service.providerId !== userId)
       throw new ForbiddenError('Não possui permissão.');
 
-    return this.servicesRepository.update(id, updateServiceDto);
+    const user = await this.usersService.findOne(userId);
+
+    const priority = await this.validateCreateAndUpdate(
+      updateServiceDto,
+      user as User,
+      service.priority,
+    );
+
+    return this.servicesRepository.update(id, {
+      ...updateServiceDto,
+      priority,
+    });
   }
 
   async remove(id: string, userId: string) {
