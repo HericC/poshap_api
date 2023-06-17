@@ -266,4 +266,26 @@ export class UsersService {
     const usersIds = users.map((user) => user.id);
     return this.usersRepository.updateMany(usersIds, { planKey: 'basic' });
   }
+
+  async sandboxPay(id: string) {
+    const payment = await this.paymentsRepository.findOne(id);
+    if (!payment) throw new NotFoundError('Pagamento não encontrado.');
+
+    const payload = {
+      id: payment.id,
+      paymentDate: new Date(),
+      value: payment.value,
+      notifyCustomer: false,
+    };
+
+    await firstValueFrom(
+      this.httpService.post(`payments/${id}/receiveInCash`, payload).pipe(
+        catchError((error: AxiosError) => {
+          console.error(error.response.data);
+          throw new DatabaseError('Não foi possivel processar o pagamento.');
+        }),
+      ),
+    );
+    return { message: 'success!!!' };
+  }
 }

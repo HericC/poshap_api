@@ -94,4 +94,10 @@ export class UsersController {
   async webhookPayment(@Body() webhook: any) {
     return this.usersService.webhookPayment(webhook);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('sandbox-pay/:id')
+  async sandboxPay(@Param('id') id: string) {
+    return this.usersService.sandboxPay(id);
+  }
 }
