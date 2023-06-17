@@ -91,6 +91,7 @@ export class UsersService {
       email: user.email,
       phone: user.phone,
       externalReference: user.id,
+      notificationDisabled: true,
     };
 
     const { data } = await firstValueFrom(
