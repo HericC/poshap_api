@@ -16,7 +16,7 @@ Abra o terminal e execute: "npm run start".
 $ npm install
 
 # install commit standardization
-$ husky install
+$ npm run prepare
 
 # complete installation
 $ npm run init

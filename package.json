@@ -1,12 +1,13 @@
 {
   "name": "poshap_api",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "",
   "author": "",
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "18.16.0"
+    "node": "18.16.0",
+    "npm": "9.5.1"
   },
   "lint-staged": {
     "*.{ts,js}": [
@@ -37,10 +38,11 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed": "nest start --config ./nest-cli.seed.json",
     "compodoc": "npx @compodoc/compodoc -p tsconfig.json -s",
+    "prepare": "husky install",
     "up": "npx prisma db push",
     "gen": "npx prisma generate && npm run up",
     "studio": "npx prisma studio",
-    "init": "npm install && husky install && npm run gen",
+    "init": "npm install && npm run prepare && npm run gen",
     "commit": "cz"
   },
   "dependencies": {
