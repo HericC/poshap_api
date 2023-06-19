@@ -98,7 +98,7 @@ export class AuthService {
   }
 
   async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.usersRepository.findOneByEmail(email);
+    const user = await this.usersRepository.findOneByEmail(email.trim());
     const blockDate = user?.blockDate > new Date();
     if (!user || blockDate) return null;
 
