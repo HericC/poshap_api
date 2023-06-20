@@ -71,7 +71,14 @@ export class AuthService {
     return http ? { message: 'Código infomado válido' } : user;
   }
 
-  async changePassword({ otgCode, password }: ChangePasswordDto) {
+  async changePassword({
+    otgCode,
+    password,
+    repeatPassword,
+  }: ChangePasswordDto) {
+    if (password !== repeatPassword)
+      throw new DatabaseError('A repetição da senha não coincide com a senha');
+
     const user = (await this.validateOtgCode({ otgCode }, false)) as User;
 
     const match = await bcrypt.compare(password, user.password);
