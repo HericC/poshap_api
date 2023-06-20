@@ -47,6 +47,15 @@ export class OrdersRepository {
     });
   }
 
+  async update(id: string, uncheckedData: { scheduled: boolean }) {
+    const data: Prisma.OrderUpdateInput = { ...uncheckedData };
+
+    return this.prisma.order.update({
+      where: { id },
+      data,
+    });
+  }
+
   async remove(id: string) {
     return this.prisma.order.delete({
       where: { id },

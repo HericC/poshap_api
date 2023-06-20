@@ -137,22 +137,23 @@ model Service {
 }
 
 model Order {
-  id                                       String    @id @default(auto()) @map("_id") @db.ObjectId
-  category                                 String
-  price                                    Float
-  description                              String?
-  schedulingDate                           DateTime?
-  clientFirstSchedulingConfirmationDate    DateTime?
-  clientSecondSchedulingConfirmationDate   DateTime?
-  providerFirstSchedulingConfirmationDate  DateTime?
-  providerSecondSchedulingConfirmationDate DateTime?
-  providerId                               String    @db.ObjectId
-  clientId                                 String    @db.ObjectId
-  provider                                 User      @relation(fields: [providerId], references: [id], name: "ordersProvider")
-  client                                   User      @relation(fields: [clientId], references: [id], name: "ordersClient")
-  createdAt                                DateTime  @default(now())
-  updatedAt                                DateTime  @default(now()) @updatedAt
-  deletedAt                                DateTime?
+  id                                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  category                             String
+  price                                Float
+  description                          String?
+  scheduled                            Boolean   @default(false)
+  scheduledDate                        DateTime?
+  clientFirstSchedulingConfirmation    DateTime?
+  clientSecondSchedulingConfirmation   DateTime?
+  providerFirstSchedulingConfirmation  DateTime?
+  providerSecondSchedulingConfirmation DateTime?
+  providerId                           String    @db.ObjectId
+  clientId                             String    @db.ObjectId
+  provider                             User      @relation(fields: [providerId], references: [id], name: "ordersProvider")
+  client                               User      @relation(fields: [clientId], references: [id], name: "ordersClient")
+  createdAt                            DateTime  @default(now())
+  updatedAt                            DateTime  @default(now()) @updatedAt
+  deletedAt                            DateTime?
 
   @@map("order")
 }

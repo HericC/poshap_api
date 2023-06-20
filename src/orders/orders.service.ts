@@ -35,7 +35,7 @@ export class OrdersService {
       category: service.category,
       price: service.price,
       description: service.description,
-      schedulingDate: service.scheduling ? new Date(schedulingDate) : undefined,
+      scheduledDate: service.scheduling ? new Date(schedulingDate) : undefined,
       providerId: service.providerId,
       clientId: userId,
     });
@@ -59,6 +59,10 @@ export class OrdersService {
       throw new ForbiddenError('Não possui permissão');
 
     return order;
+  }
+
+  async acceptScheduling(id: string) {
+    return this.ordersRepository.update(id, { scheduled: true });
   }
 
   async remove(id: string, userId: string) {

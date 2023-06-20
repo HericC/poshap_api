@@ -19,6 +19,9 @@ export class OngoingService {
     if (order.providerId !== userId)
       throw new ForbiddenError('Não possui permissão');
 
+    if (order.scheduledDate && !order.scheduled)
+      return this.orderService.acceptScheduling(order.id);
+
     const ongoing = await this.ongoingRepository.findOneByProvider(
       order.providerId,
     );
