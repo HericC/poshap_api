@@ -16,10 +16,10 @@ export class OrdersService {
     const service = await this.servicesService.findOne(serviceId);
 
     if (service.providerId === userId)
-      throw new ForbiddenError('Não pode solicitar o seu proprio serviço.');
+      throw new ForbiddenError('Não pode solicitar o seu proprio serviço');
 
     if (schedulingDate && !service.scheduling)
-      throw new ForbiddenError('Serviço não possui a opção de agendamento.');
+      throw new ForbiddenError('Serviço não possui a opção de agendamento');
 
     const orders = await this.ordersRepository.findAll({
       providerId: service.providerId,
@@ -28,7 +28,7 @@ export class OrdersService {
 
     if (orders.length)
       throw new ForbiddenError(
-        'Não pode solicitar mais serviços desse usuário.',
+        'Não pode solicitar mais serviços desse usuário',
       );
 
     return this.ordersRepository.create({
@@ -53,10 +53,10 @@ export class OrdersService {
     const order = await this.ordersRepository.findOne(id);
 
     if (!order)
-      throw new NotFoundError('Solicitação de serviço não encontrada.');
+      throw new NotFoundError('Solicitação de serviço não encontrada');
 
     if (!(order.providerId === userId || order.clientId === userId))
-      throw new ForbiddenError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão');
 
     return order;
   }
@@ -65,7 +65,7 @@ export class OrdersService {
     const order = await this.findOne(id, userId);
 
     if (!(order.providerId === userId || order.clientId === userId))
-      throw new ForbiddenError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão');
 
     return this.ordersRepository.remove(id);
   }

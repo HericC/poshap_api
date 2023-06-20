@@ -62,13 +62,13 @@ export class AuthService {
 
   async validateOtgCode({ otgCode }: OtgCodeDto, http = true) {
     const user = await this.usersRepository.findOneByOtgCode(otgCode);
-    if (!user) throw new DatabaseError('Código infomado inválido.');
+    if (!user) throw new DatabaseError('Código infomado inválido');
 
     const currentDate = new Date();
     if (currentDate > user.forgotPasswordExpires)
-      throw new DatabaseError('Código infomado inválido.');
+      throw new DatabaseError('Código infomado inválido');
 
-    return http ? { message: 'Código infomado válido.' } : user;
+    return http ? { message: 'Código infomado válido' } : user;
   }
 
   async changePassword({ otgCode, password }: ChangePasswordDto) {
@@ -76,9 +76,7 @@ export class AuthService {
 
     const match = await bcrypt.compare(password, user.password);
     if (match)
-      throw new ConflictError(
-        'A nova senha não pode ser igual a senha antiga.',
-      );
+      throw new ConflictError('A nova senha não pode ser igual a senha antiga');
 
     const hash = await bcrypt.hash(password, 8);
     await this.usersRepository.update(user.id, {
@@ -94,7 +92,7 @@ export class AuthService {
       context: { email: this.config.get('MAIL_SUPPORT') },
     });
 
-    return { message: 'Senha alterada com sucesso.' };
+    return { message: 'Senha alterada com sucesso' };
   }
 
   async validateUser(email: string, password: string): Promise<User> {

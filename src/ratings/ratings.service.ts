@@ -17,14 +17,14 @@ export class RatingsService {
     userId: string,
   ) {
     if (createRatingDto.userId === userId)
-      throw new ForbiddenError('Não pode avaliar a se próprio.');
+      throw new ForbiddenError('Não pode avaliar a se próprio');
 
     return this.providerRatingsRepository.create(createRatingDto);
   }
 
   async createClient(createRatingDto: CreateClientRatingDto, userId: string) {
     if (createRatingDto.userId === userId)
-      throw new ForbiddenError('Não pode avaliar a se próprio.');
+      throw new ForbiddenError('Não pode avaliar a se próprio');
 
     return this.clientRatingsRepository.create(createRatingDto);
   }

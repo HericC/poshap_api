@@ -3,6 +3,6 @@ import { IsNotEmpty } from 'class-validator';
 
 export class OtgCodeDto {
   @ApiProperty()
-  @IsNotEmpty({ message: 'É necessário informar o código.' })
+  @IsNotEmpty({ message: 'É necessário informar o código' })
   otgCode: string;
 }

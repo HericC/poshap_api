@@ -11,6 +11,6 @@ const formatMessage = (message: string | unknown) => {
 export class IdConstraintError extends DatabaseError {
   constructor(error: PrismaClientError) {
     const message = formatMessage(error.meta.message);
-    super(`O id '${message}' é inválido.`);
+    super(`O id '${message}' é inválido`);
   }
 }

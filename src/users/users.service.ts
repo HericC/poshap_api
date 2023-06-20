@@ -41,7 +41,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const plan = await this.plansRepository.findOne('basic');
-    if (!plan) throw new DatabaseError('Não foi possivel registrar o usuário.');
+    if (!plan) throw new DatabaseError('Não foi possivel registrar o usuário');
 
     const hash = await bcrypt.hash(createUserDto.password, 8);
     return this.usersRepository.create({
@@ -62,13 +62,13 @@ export class UsersService {
 
   async findPaymentBarCode(id: string) {
     const payment = await this.paymentsRepository.findOne(id);
-    if (!payment) throw new NotFoundError('Pagamento não encontrado.');
+    if (!payment) throw new NotFoundError('Pagamento não encontrado');
 
     const { data } = await firstValueFrom(
       this.httpService.post(`payments/${id}/identificationField`).pipe(
         catchError((error: AxiosError) => {
           console.error(error.response.data);
-          throw new DatabaseError('Não foi possivel processar a requisição.');
+          throw new DatabaseError('Não foi possivel processar a requisição');
         }),
       ),
     );
@@ -78,13 +78,13 @@ export class UsersService {
 
   async findOne(id: string) {
     const user = await this.usersRepository.findOne(id);
-    if (!user) throw new NotFoundError('Usuário não encontrado.');
+    if (!user) throw new NotFoundError('Usuário não encontrado');
     return user;
   }
 
   async findOnePublic(id: string) {
     const user = await this.usersRepository.findOnePublic(id);
-    if (!user) throw new NotFoundError('Usuário não encontrado.');
+    if (!user) throw new NotFoundError('Usuário não encontrado');
 
     const ratings = await this.ratingsService.averageRatings(id);
     return { ...user, ratings };
@@ -115,7 +115,7 @@ export class UsersService {
       this.httpService.post('customers', payload).pipe(
         catchError((error: AxiosError) => {
           console.error(error.response.data);
-          throw new DatabaseError('Não foi possivel processar o pagamento.');
+          throw new DatabaseError('Não foi possivel processar o pagamento');
         }),
       ),
     );
@@ -132,7 +132,7 @@ export class UsersService {
   ) {
     const payment = await this.paymentsRepository.findOnePendingByUser(user.id);
     if (payment)
-      throw new ForbiddenError('Não pode ter mais de 1 pagamento em espera.');
+      throw new ForbiddenError('Não pode ter mais de 1 pagamento em espera');
 
     if (!user.paymentClientId) user = (await this.paymentClient(user)) as User;
 
@@ -151,7 +151,7 @@ export class UsersService {
       this.httpService.post('payments', payload).pipe(
         catchError((error: AxiosError) => {
           console.error(error.response.data);
-          throw new DatabaseError('Não foi possivel processar o pagamento.');
+          throw new DatabaseError('Não foi possivel processar o pagamento');
         }),
       ),
     );
@@ -177,7 +177,7 @@ export class UsersService {
     user: User,
   ) {
     const wallet = user.wallet - price;
-    if (wallet < 0) throw new DatabaseError('Não possui saldo suficiente.');
+    if (wallet < 0) throw new DatabaseError('Não possui saldo suficiente');
 
     const planDate = new Date();
     planDate.setMonth(planDate.getMonth() + time);
@@ -189,23 +189,23 @@ export class UsersService {
     const { key, typePlan, typePayment } = updatePlanDto;
 
     const type = TypePaymentPlan[typePayment];
-    if (!type) throw new NotFoundError('Tipo de pagamento não disponivel.');
+    if (!type) throw new NotFoundError('Tipo de pagamento não disponivel');
 
     const plan = await this.plansRepository.findOne(key);
-    if (!plan) throw new NotFoundError('Plano não encontrado.');
+    if (!plan) throw new NotFoundError('Plano não encontrado');
 
     const user = await this.findOne(userId);
     if (plan.key === user.planKey)
-      throw new DatabaseError('Já possui este plano.');
+      throw new DatabaseError('Já possui este plano');
 
     if (
       plan.key === 'basic' ||
       (plan.key === 'silver' && user.planKey === 'gold')
     )
-      throw new DatabaseError('Plano inferior ao plano atual.');
+      throw new DatabaseError('Plano inferior ao plano atual');
 
     const price = plan[`${typePlan}Price`];
-    if (!price) throw new NotFoundError('Tipo do plano não encontrado.');
+    if (!price) throw new NotFoundError('Tipo do plano não encontrado');
 
     const time = PlanTime[typePlan];
 
@@ -221,7 +221,7 @@ export class UsersService {
     const { value, typePayment } = updateWalletDto;
 
     const type = TypePaymentWallet[typePayment];
-    if (!type) throw new NotFoundError('Tipo de pagamento não disponivel.');
+    if (!type) throw new NotFoundError('Tipo de pagamento não disponivel');
 
     const user = await this.findOne(userId);
 
@@ -233,7 +233,7 @@ export class UsersService {
   async debit(value: number, userId: string) {
     const user = await this.findOne(userId);
     const wallet = user.wallet - value;
-    if (wallet < 0) throw new DatabaseError('Não possui saldo suficiente.');
+    if (wallet < 0) throw new DatabaseError('Não possui saldo suficiente');
     return this.usersRepository.update(userId, { wallet });
   }
 
@@ -297,7 +297,7 @@ export class UsersService {
 
   async sandboxPay(id: string) {
     const payment = await this.paymentsRepository.findOne(id);
-    if (!payment) throw new NotFoundError('Pagamento não encontrado.');
+    if (!payment) throw new NotFoundError('Pagamento não encontrado');
 
     const payload = {
       id: payment.id,
@@ -310,7 +310,7 @@ export class UsersService {
       this.httpService.post(`payments/${id}/receiveInCash`, payload).pipe(
         catchError((error: AxiosError) => {
           console.error(error.response.data);
-          throw new DatabaseError('Não foi possivel processar o pagamento.');
+          throw new DatabaseError('Não foi possivel processar o pagamento');
         }),
       ),
     );

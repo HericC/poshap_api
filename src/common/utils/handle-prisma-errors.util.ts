@@ -18,5 +18,5 @@ export const handlePrismaErrors = (error: PrismaClientError) => {
 
   return prismaError
     ? prismaError(error)
-    : new DatabaseError('Erro desconhecido.');
+    : new DatabaseError('Erro desconhecido');
 };

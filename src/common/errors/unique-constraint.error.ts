@@ -16,6 +16,6 @@ const formatTarget = (target: string | unknown) => {
 export class UniqueConstraintError extends ConflictError {
   constructor(error: PrismaClientError) {
     const target = formatTarget(error.meta.target);
-    super(`Já existe um registro com este ${target}.`);
+    super(`Já existe um registro com este ${target}`);
   }
 }

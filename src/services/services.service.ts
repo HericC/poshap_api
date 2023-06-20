@@ -21,9 +21,7 @@ export class ServicesService {
     updatePriority = false,
   ) {
     if (serviceDto.scheduling && user.planKey !== 'gold')
-      throw new ForbiddenError(
-        'Plano incompatível com a opção de agendamento.',
-      );
+      throw new ForbiddenError('Plano incompatível com a opção de agendamento');
 
     if (updatePriority) return updatePriority;
 
@@ -86,7 +84,7 @@ export class ServicesService {
 
   async findOne(id: string) {
     const service = await this.servicesRepository.findOne(id);
-    if (!service) throw new NotFoundError('Serviço não encontrado.');
+    if (!service) throw new NotFoundError('Serviço não encontrado');
     return service;
   }
 
@@ -94,7 +92,7 @@ export class ServicesService {
     const service = await this.findOne(id);
 
     if (service.providerId !== userId)
-      throw new ForbiddenError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão');
 
     const user = await this.usersService.findOne(userId);
 
@@ -114,7 +112,7 @@ export class ServicesService {
     const service = await this.findOne(id);
 
     if (service.providerId !== userId)
-      throw new ForbiddenError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão');
 
     return this.servicesRepository.remove(id);
   }

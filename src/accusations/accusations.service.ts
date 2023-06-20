@@ -64,7 +64,7 @@ export class AccusationsService {
 
   async create(createAccusationDto: CreateAccusationDto, userId: string) {
     if (createAccusationDto.accusedId === userId)
-      throw new ForbiddenError('Não pode denunciar a se próprio.');
+      throw new ForbiddenError('Não pode denunciar a se próprio');
 
     const accusation = await this.accusationsRepository.create({
       ...createAccusationDto,
@@ -85,7 +85,7 @@ export class AccusationsService {
 
   async findOne(id: string) {
     const accusation = await this.accusationsRepository.findOne(id);
-    if (!accusation) throw new NotFoundError('Denuncia não encontrado.');
+    if (!accusation) throw new NotFoundError('Denuncia não encontrado');
     return accusation;
   }
 }

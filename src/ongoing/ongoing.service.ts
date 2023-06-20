@@ -17,14 +17,14 @@ export class OngoingService {
     const order = await this.orderService.findOne(orderId, userId);
 
     if (order.providerId !== userId)
-      throw new ForbiddenError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão');
 
     const ongoing = await this.ongoingRepository.findOneByProvider(
       order.providerId,
     );
 
     if (ongoing)
-      throw new ForbiddenError('Não pode ter mais de 1 serviço em andamento.');
+      throw new ForbiddenError('Não pode ter mais de 1 serviço em andamento');
 
     await this.orderService.remove(orderId, userId);
 
@@ -57,10 +57,10 @@ export class OngoingService {
     const ongoing = await this.ongoingRepository.findOne(id);
 
     if (!ongoing)
-      throw new NotFoundError('Serviço em andamento não encontrado.');
+      throw new NotFoundError('Serviço em andamento não encontrado');
 
     if (!(ongoing.providerId === userId || ongoing.clientId === userId))
-      throw new ForbiddenError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão');
 
     return ongoing;
   }
@@ -69,13 +69,13 @@ export class OngoingService {
     const ongoing = await this.findOne(id, userId);
 
     if (ongoing.providerId !== userId)
-      throw new ForbiddenError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão');
 
     if (ongoing.finishedDate)
-      throw new ForbiddenError('O serviço em andamento já foi finalizado.');
+      throw new ForbiddenError('O serviço em andamento já foi finalizado');
 
     if (ongoing.canceledDate)
-      throw new ForbiddenError('O serviço em andamento já foi cancelado.');
+      throw new ForbiddenError('O serviço em andamento já foi cancelado');
 
     return this.ongoingRepository.update(id, { finishedDate: new Date() });
   }
@@ -84,13 +84,13 @@ export class OngoingService {
     const ongoing = await this.findOne(id, userId);
 
     if (!(ongoing.providerId === userId || ongoing.clientId === userId))
-      throw new ForbiddenError('Não possui permissão.');
+      throw new ForbiddenError('Não possui permissão');
 
     if (ongoing.finishedDate)
-      throw new ForbiddenError('O serviço em andamento já foi finalizado.');
+      throw new ForbiddenError('O serviço em andamento já foi finalizado');
 
     if (ongoing.canceledDate)
-      throw new ForbiddenError('O serviço em andamento já foi cancelado.');
+      throw new ForbiddenError('O serviço em andamento já foi cancelado');
 
     return this.ongoingRepository.update(id, {
       canceledDate: new Date(),
