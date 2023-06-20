@@ -40,6 +40,10 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    if (createUserDto.password !== createUserDto.repeatPassword)
+      throw new DatabaseError('A repetição da senha não coincide com a senha');
+    delete createUserDto.repeatPassword;
+
     const plan = await this.plansRepository.findOne('basic');
     if (!plan) throw new DatabaseError('Não foi possivel registrar o usuário');
 
@@ -92,8 +96,14 @@ export class UsersService {
 
   async update(updateUserDto: UpdateUserDto, userId: string) {
     let hash: string;
-    if (updateUserDto.password)
+    if (updateUserDto.password) {
+      if (updateUserDto.password !== updateUserDto.repeatPassword)
+        throw new DatabaseError(
+          'A repetição da senha não coincide com a senha',
+        );
       hash = await bcrypt.hash(updateUserDto.password, 8);
+    }
+    delete updateUserDto.repeatPassword;
 
     return this.usersRepository.update(userId, {
       ...updateUserDto,
