@@ -83,7 +83,9 @@ export class UsersService {
   async findOne(id: string) {
     const user = await this.usersRepository.findOne(id);
     if (!user) throw new NotFoundError('Usuário não encontrado');
-    return user;
+
+    const ratings = await this.ratingsService.averageRatings(id);
+    return { ...user, ratings };
   }
 
   async findOnePublic(id: string) {
@@ -282,7 +284,10 @@ export class UsersService {
       status: webhook.payment.status,
     });
 
-    if (payment.status === 'PAYMENT_RECEIVED') {
+    if (
+      payment.status === 'RECEIVED' ||
+      payment.status === 'RECEIVED_IN_CASH'
+    ) {
       if (payment.action === 'update-plan')
         this.webhookUpdatePlan(payment, payment.user);
       else if (payment.action === 'deposit')
