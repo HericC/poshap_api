@@ -2,7 +2,7 @@
   "name": "poshap_api",
   "version": "1.0.0",
   "description": "",
-  "author": "",
+  "author": "Heric Macedo Oliveira Silva",
   "private": true,
   "license": "MIT",
   "engines": {
@@ -12,8 +12,7 @@
   "lint-staged": {
     "*.{ts,js}": [
       "npm run lint",
-      "npm run format",
-      "git add"
+      "npm run format"
     ]
   },
   "config": {

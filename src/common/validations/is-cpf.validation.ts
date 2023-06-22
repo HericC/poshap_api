@@ -6,6 +6,8 @@ import {
 @ValidatorConstraint({ name: 'isCpf', async: false })
 export class IsCpf implements ValidatorConstraintInterface {
   validate(number: string) {
+    if (!number) return false;
+
     number = number.replace(/[\s.-]*/gim, '');
     if (number == '00000000000') return false;
 
