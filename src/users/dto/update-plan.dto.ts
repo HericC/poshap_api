@@ -19,16 +19,16 @@ export class UpdatePlanDto {
   key: string;
 
   @ApiProperty({
-    description: 'Tipo de pagamento',
+    description: 'Tipo do plano',
     enum: TypePlan,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'É necessário informar o tipo do plano' })
   typePlan: TypePlan;
 
   @ApiProperty({
     description: 'Tipo de pagamento',
     enum: TypePayment,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'É necessário informar o tipo de pagamento' })
   typePayment: TypePayment;
 }
