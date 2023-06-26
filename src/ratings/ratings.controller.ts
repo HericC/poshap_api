@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   UserJwt,
@@ -31,5 +31,11 @@ export class RatingsController {
     @Body() createRatingDto: CreateClientRatingDto,
   ) {
     return this.ratingsService.createClient(createRatingDto, user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('average/:id')
+  async averageRatings(@Param('id') id: string) {
+    return this.ratingsService.averageRatings(id);
   }
 }

@@ -5,6 +5,7 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { FilterServiceDto } from './dto/filter-service.dto';
 import { ServicesRepository } from './repositories/services.prisma.repository';
 import { UsersService } from '../users/users.service';
+import { RatingsService } from 'src/ratings/ratings.service';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { ForbiddenError } from '../common/errors/forbidden.error';
 
@@ -13,6 +14,7 @@ export class ServicesService {
   constructor(
     private readonly servicesRepository: ServicesRepository,
     private readonly usersService: UsersService,
+    private readonly ratingsService: RatingsService,
   ) {}
 
   private async validateCreateAndUpdate(
@@ -85,6 +87,10 @@ export class ServicesService {
   async findOne(id: string) {
     const service = await this.servicesRepository.findOne(id);
     if (!service) throw new NotFoundError('Serviço não encontrado');
+
+    const ratings = await this.ratingsService.averageRatings(id);
+    service.provider = { ...service.provider, ratings } as any;
+
     return service;
   }
 
