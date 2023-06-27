@@ -67,6 +67,7 @@ export class OngoingRepository {
     },
   ) {
     const canceledUserId = uncheckedData.canceledUserId;
+    delete uncheckedData.canceledUserId;
 
     const data: Prisma.OngoingUpdateInput = {
       ...uncheckedData,

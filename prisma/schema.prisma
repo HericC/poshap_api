@@ -170,7 +170,7 @@ model Ongoing {
   canceledUserId String?   @db.ObjectId
   provider       User      @relation(fields: [providerId], references: [id], name: "ongoingProvider")
   client         User      @relation(fields: [clientId], references: [id], name: "ongoingClient")
-  canceledUser   User?     @relation(fields: [providerId], references: [id], name: "ongoingCanceled")
+  canceledUser   User?     @relation(fields: [canceledUserId], references: [id], name: "ongoingCanceled")
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @default(now()) @updatedAt
   deletedAt      DateTime?
