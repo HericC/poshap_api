@@ -88,7 +88,9 @@ export class ServicesService {
     const service = await this.servicesRepository.findOne(id);
     if (!service) throw new NotFoundError('Serviço não encontrado');
 
-    const ratings = await this.ratingsService.averageRatings(id);
+    const ratings = await this.ratingsService.averageRatings(
+      service.providerId,
+    );
     service.provider = { ...service.provider, ratings } as any;
 
     return service;
