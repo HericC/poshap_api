@@ -13,6 +13,7 @@ const user = {
 const include: Prisma.OngoingInclude = {
   provider: { select: user },
   client: { select: user },
+  canceledUser: { select: user },
 };
 
 @Injectable()
