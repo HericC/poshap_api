@@ -48,6 +48,12 @@ export class ServicesController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('min-and-max-prices')
+  async findMinAndMaxPrices() {
+    return this.servicesService.findMinAndMaxPrices();
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('logged')
   async findAllLogged(@UserRequest() user: UserJwt) {
     return this.servicesService.findAllLogged(user.id);

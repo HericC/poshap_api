@@ -45,6 +45,13 @@ export class ServicesRepository {
     });
   }
 
+  async findMinAndMaxPrices() {
+    return this.prisma.service.aggregate({
+      _min: { price: true },
+      _max: { price: true },
+    });
+  }
+
   async findOne(id: string) {
     return this.prisma.service.findUnique({
       where: { id },

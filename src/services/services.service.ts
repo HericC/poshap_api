@@ -84,6 +84,11 @@ export class ServicesService {
     return categories.map((category) => category.category);
   }
 
+  async findMinAndMaxPrices() {
+    const prices = await this.servicesRepository.findMinAndMaxPrices();
+    return { minPrice: prices._min.price, maxPrice: prices._max.price };
+  }
+
   async findAllLogged(userId: string) {
     return this.servicesRepository.findAll({ providerId: userId });
   }
