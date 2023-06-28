@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Service, User } from '@prisma/client';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { FilterServiceDto } from './dto/filter-service.dto';
@@ -64,7 +64,7 @@ export class ServicesService {
       categories,
     } = filter;
 
-    return this.servicesRepository.findAll({
+    const _services = await this.servicesRepository.findAll({
       OR: search
         ? [
             { category: { contains: search, mode: 'insensitive' } },
@@ -77,6 +77,23 @@ export class ServicesService {
       },
       category: { in: categories, mode: 'insensitive' },
     });
+
+    const services: Service[] = [];
+    for (const service of _services) {
+      const ratings = await this.ratingsService.averageRatings(
+        service.providerId,
+      );
+
+      if (
+        !rating ||
+        !ratings.providerRating ||
+        !ratings.serviceRating ||
+        ratings.providerRating >= +rating ||
+        ratings.serviceRating >= +rating
+      )
+        services.push(service);
+    }
+    return services;
   }
 
   async findAllCategories() {
