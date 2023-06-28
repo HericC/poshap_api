@@ -84,6 +84,10 @@ export class ServicesService {
     return categories.map((category) => category.category);
   }
 
+  async findAllLogged(userId: string) {
+    return this.servicesRepository.findAll({ providerId: userId });
+  }
+
   async findOne(id: string) {
     const service = await this.servicesRepository.findOne(id);
     if (!service) throw new NotFoundError('Serviço não encontrado');

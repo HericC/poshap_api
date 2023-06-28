@@ -48,6 +48,12 @@ export class ServicesController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('logged')
+  async findAllLogged(@UserRequest() user: UserJwt) {
+    return this.servicesService.findAllLogged(user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.servicesService.findOne(id);
