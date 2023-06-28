@@ -21,7 +21,10 @@ export class PaymentsRepository {
   }
 
   async findAll(where: Prisma.PaymentWhereInput) {
-    return this.prisma.payment.findMany({ where });
+    return this.prisma.payment.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   async findOne(id: string) {

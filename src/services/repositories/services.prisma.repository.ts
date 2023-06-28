@@ -35,7 +35,7 @@ export class ServicesRepository {
   async findAll(where: Prisma.ServiceWhereInput) {
     return this.prisma.service.findMany({
       where,
-      orderBy: [{ priority: 'desc' }],
+      orderBy: { priority: 'desc' },
     });
   }
 

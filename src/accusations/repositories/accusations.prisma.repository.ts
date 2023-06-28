@@ -37,7 +37,10 @@ export class AccusationsRepository {
   }
 
   async findAll(where: Prisma.AccusationWhereInput) {
-    return this.prisma.accusation.findMany({ where });
+    return this.prisma.accusation.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   async findOne(id: string) {
