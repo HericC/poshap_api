@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrdersRepository } from './repositories/orders.prisma.repository';
 import { ServicesService } from '../services/services.service';
+import { RatingsService } from '../ratings/ratings.service';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { ForbiddenError } from '../common/errors/forbidden.error';
 
@@ -10,6 +11,7 @@ export class OrdersService {
   constructor(
     private readonly ordersRepository: OrdersRepository,
     private readonly servicesService: ServicesService,
+    private readonly ratingsService: RatingsService,
   ) {}
 
   async create({ serviceId, schedulingDate }: CreateOrderDto, userId: string) {
@@ -57,6 +59,16 @@ export class OrdersService {
 
     if (!(order.providerId === userId || order.clientId === userId))
       throw new ForbiddenError('Não possui permissão');
+
+    const ratingsProvider = await this.ratingsService.averageRatings(
+      order.providerId,
+    );
+    order.provider = { ...order.provider, ratingsProvider } as any;
+
+    const ratingsClient = await this.ratingsService.averageRatings(
+      order.clientId,
+    );
+    order.client = { ...order.client, ratingsClient } as any;
 
     return order;
   }

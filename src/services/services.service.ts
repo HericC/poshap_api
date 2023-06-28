@@ -5,7 +5,7 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { FilterServiceDto } from './dto/filter-service.dto';
 import { ServicesRepository } from './repositories/services.prisma.repository';
 import { UsersService } from '../users/users.service';
-import { RatingsService } from 'src/ratings/ratings.service';
+import { RatingsService } from '../ratings/ratings.service';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { ForbiddenError } from '../common/errors/forbidden.error';
 

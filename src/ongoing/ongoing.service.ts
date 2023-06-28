@@ -3,6 +3,7 @@ import { CreateOngoingDto } from './dto/create-ongoing.dto';
 import { FilterOngoingDto } from './dto/filter-ongoing.dto';
 import { OngoingRepository } from './repositories/ongoing.prisma.repository';
 import { OrdersService } from '../orders/orders.service';
+import { RatingsService } from '../ratings/ratings.service';
 import { NotFoundError } from '../common/errors/not-found.error';
 import { ForbiddenError } from '../common/errors/forbidden.error';
 
@@ -11,6 +12,7 @@ export class OngoingService {
   constructor(
     private readonly ongoingRepository: OngoingRepository,
     private readonly orderService: OrdersService,
+    private readonly ratingsService: RatingsService,
   ) {}
 
   async create({ orderId }: CreateOngoingDto, userId: string) {
@@ -64,6 +66,16 @@ export class OngoingService {
 
     if (!(ongoing.providerId === userId || ongoing.clientId === userId))
       throw new ForbiddenError('Não possui permissão');
+
+    const ratingsProvider = await this.ratingsService.averageRatings(
+      ongoing.providerId,
+    );
+    ongoing.provider = { ...ongoing.provider, ratingsProvider } as any;
+
+    const ratingsClient = await this.ratingsService.averageRatings(
+      ongoing.clientId,
+    );
+    ongoing.client = { ...ongoing.client, ratingsClient } as any;
 
     return ongoing;
   }
