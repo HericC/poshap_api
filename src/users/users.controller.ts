@@ -45,9 +45,18 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('payments/:id')
+  async findPaymentOne(@UserRequest() user: UserJwt, @Param('id') id: string) {
+    return this.usersService.findPaymentOne(id, user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('payments/bar-code/:id')
-  async findPaymentBarCode(@Param('id') id: string) {
-    return this.usersService.findPaymentBarCode(id);
+  async findPaymentBarCode(
+    @UserRequest() user: UserJwt,
+    @Param('id') id: string,
+  ) {
+    return this.usersService.findPaymentBarCode(id, user.id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -103,7 +112,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Post('sandbox-pay/:id')
-  async sandboxPay(@Param('id') id: string) {
-    return this.usersService.sandboxPay(id);
+  async sandboxPay(@UserRequest() user: UserJwt, @Param('id') id: string) {
+    return this.usersService.sandboxPay(id, user.id);
   }
 }

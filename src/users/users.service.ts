@@ -64,9 +64,22 @@ export class UsersService {
     return this.paymentsRepository.findAll({ userId });
   }
 
-  async findPaymentBarCode(id: string) {
+  async findPaymentOne(id: string, userId: string) {
     const payment = await this.paymentsRepository.findOne(id);
     if (!payment) throw new NotFoundError('Pagamento não encontrado');
+
+    if (payment.userId !== userId)
+      throw new ForbiddenError('Não possui permissão');
+
+    return payment;
+  }
+
+  async findPaymentBarCode(id: string, userId: string) {
+    const payment = await this.paymentsRepository.findOne(id);
+    if (!payment) throw new NotFoundError('Pagamento não encontrado');
+
+    if (payment.userId !== userId)
+      throw new ForbiddenError('Não possui permissão');
 
     const { data } = await firstValueFrom(
       this.httpService.post(`payments/${id}/identificationField`).pipe(
@@ -310,9 +323,12 @@ export class UsersService {
     return this.usersRepository.updateMany(usersIds, { planKey: 'basic' });
   }
 
-  async sandboxPay(id: string) {
+  async sandboxPay(id: string, userId: string) {
     const payment = await this.paymentsRepository.findOne(id);
     if (!payment) throw new NotFoundError('Pagamento não encontrado');
+
+    if (payment.userId !== userId)
+      throw new ForbiddenError('Não possui permissão');
 
     const payload = {
       id: payment.id,
