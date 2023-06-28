@@ -30,7 +30,6 @@ export class PaymentsRepository {
   async findOne(id: string) {
     return this.prisma.payment.findUnique({
       where: { id },
-      include: { user: true },
     });
   }
 
