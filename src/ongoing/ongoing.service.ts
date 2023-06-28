@@ -70,12 +70,12 @@ export class OngoingService {
     const ratingsProvider = await this.ratingsService.averageRatings(
       ongoing.providerId,
     );
-    ongoing.provider = { ...ongoing.provider, ratingsProvider } as any;
+    ongoing.provider = { ...ongoing.provider, ratings: ratingsProvider } as any;
 
     const ratingsClient = await this.ratingsService.averageRatings(
       ongoing.clientId,
     );
-    ongoing.client = { ...ongoing.client, ratingsClient } as any;
+    ongoing.client = { ...ongoing.client, ratings: ratingsClient } as any;
 
     return ongoing;
   }

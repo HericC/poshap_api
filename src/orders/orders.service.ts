@@ -63,12 +63,12 @@ export class OrdersService {
     const ratingsProvider = await this.ratingsService.averageRatings(
       order.providerId,
     );
-    order.provider = { ...order.provider, ratingsProvider } as any;
+    order.provider = { ...order.provider, ratings: ratingsProvider } as any;
 
     const ratingsClient = await this.ratingsService.averageRatings(
       order.clientId,
     );
-    order.client = { ...order.client, ratingsClient } as any;
+    order.client = { ...order.client, ratings: ratingsClient } as any;
 
     return order;
   }
